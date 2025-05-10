@@ -2,6 +2,11 @@ import Router from 'koa-router';
 import adapter from '../adapter';
 const router = new Router();
 
+// testing
+router.get('/', (ctx) => {
+    ctx.body = { message: 'Hello World' };
+});
+
 router.get('/books', async (ctx) => {
     const filters = ctx.query.filters as Array<{ from?: number, to?: number }>;
     // TODO: validate filters
