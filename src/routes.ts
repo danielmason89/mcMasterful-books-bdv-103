@@ -1,4 +1,4 @@
-import { z } from "zod"
+import { z, ZodError } from "zod"
 import createRouter from "koa-zod-router";
 import adapter from '../adapter';
 
@@ -16,6 +16,16 @@ const filterSchema = z.object({
     filters: z
     .string()
     .optional()
+    .refine((val) => {
+        try {
+          const parsed = JSON.parse(val ?? "[]");
+          return Array.isArray(parsed);
+        } catch {
+          return false;
+        }
+      }, {
+        message: "Invalid JSON format for filters"
+      })
     .transform((val) => {
         try {
             const parsed = JSON.parse(val ?? "[]");
@@ -24,7 +34,7 @@ const filterSchema = z.object({
             return [];
         }
     })
-    .refine((arr) => {
+    .refine((arr): arr is Array<{ from?: number; to?: number }> =>
         arr.every(
             (filter) =>
                 typeof filter === "object" &&
@@ -32,7 +42,7 @@ const filterSchema = z.object({
             (filter.to === undefined || typeof filter.to === "number")
         ),
         { message: "invalid input" }
-    })
+    )
 })
 
 // Simple ping, (sanity test) route
@@ -54,8 +64,19 @@ router.get('/books', async (ctx) => {
         const books = await adapter.listBooks(filters);
         ctx.body = books;
     } catch (error) {
+        if (error instanceof ZodError) {
+            ctx.status = 400;
+            ctx.body = {
+              error: "Invalid input",
+              details: error.errors.map(e => ({
+                path: e.path.join('.'),
+                message: e.message
+              }))
+            };
+          } else {
         ctx.status = 500;
-        ctx.body = { error: `Failed to fetch books due to: ${error}` };
+        ctx.body = { error: `Internal server error` };
+        }
     }
 });
 
