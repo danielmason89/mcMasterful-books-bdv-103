@@ -1,5 +1,9 @@
 import books from './../mcmasteful-book-list.json';
 
+/**
+ * Book structure definition.
+ * Matches the fields in the book JSON file.
+ */
 export interface Book {
     name: string,
     author: string,
@@ -8,9 +12,21 @@ export interface Book {
     image?: string,
 };
 
+/**
+ * Filter type for optional price range queries.
+ */
 type PriceFilter = { from?: number; to?: number };
 
 // If you have multiple filters, a book matching any of them is a match.
+/**
+ * listBooks
+ * -----------
+ * Returns all books if no filters are provided.
+ * Otherwise, returns books that fall within one or more of the specified price ranges.
+ *
+ * @param filters Optional array of price range filters
+ * @returns Array of matching books
+ */
 async function listBooks(filters?: PriceFilter[]) : Promise<Book[]>{
     try {
 

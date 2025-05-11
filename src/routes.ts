@@ -7,10 +7,11 @@ const router = createRouter();
 // testing
 // Zod schema for validating query parameters
 /**
- * Zod schema to validate and parse the `filters` query param.
- * - Expects a JSON string representing an array of price filters.
- * - Each filter may include optional `from` and `to` numeric values.
- * - Invalid or missing input defaults to an empty array.
+ * Validates the `filters` query parameter:
+ * - Expects a JSON string representing an array of objects with optional `from` and `to` numbers.
+ * - First, checks for valid JSON format.
+ * - Then parses and transforms it into an array.
+ * - Finally, ensures each object is well-structured.
  */
 const filterSchema = z.object({
     filters: z
@@ -45,15 +46,15 @@ const filterSchema = z.object({
     )
 })
 
-// Simple ping, (sanity test) route
+// Health check route
 router.get('/', (ctx) => {
     ctx.body = { message: 'Hello World' };
 });
 
 /**
  * GET /books
- * Returns a list of books, optionally filtered by price ranges.
- * Accepts a `filters` query parameter in JSON format.
+ * Returns a list of books.
+ * Optionally filters results by price ranges using a `filters` query parameter.
  * Example: /books?filters=[{"from":10,"to":25}]
  */
 router.get('/books', async (ctx) => {
@@ -64,6 +65,7 @@ router.get('/books', async (ctx) => {
         const books = await adapter.listBooks(filters);
         ctx.body = books;
     } catch (error) {
+        // Handle validation errors
         if (error instanceof ZodError) {
             ctx.status = 400;
             ctx.body = {
@@ -74,6 +76,7 @@ router.get('/books', async (ctx) => {
               }))
             };
           } else {
+        // Handle general server errors
         ctx.status = 500;
         ctx.body = { error: `Internal server error` };
         }
