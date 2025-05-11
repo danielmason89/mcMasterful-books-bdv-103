@@ -6,6 +6,12 @@ const router = createRouter();
 
 // testing
 // Zod schema for validating query parameters
+/**
+ * Zod schema to validate and parse the `filters` query param.
+ * - Expects a JSON string representing an array of price filters.
+ * - Each filter may include optional `from` and `to` numeric values.
+ * - Invalid or missing input defaults to an empty array.
+ */
 const filterSchema = z.object({
     filters: z
     .string()
@@ -28,14 +34,23 @@ const filterSchema = z.object({
         { message: "invalid filter" }
     })
 })
+
+// Simple ping, (sanity test) route
 router.get('/', (ctx) => {
     ctx.body = { message: 'Hello World' };
 });
 
+/**
+ * GET /books
+ * Returns a list of books, optionally filtered by price ranges.
+ * Accepts a `filters` query parameter in JSON format.
+ * Example: /books?filters=[{"from":10,"to":25}]
+ */
 router.get('/books', async (ctx) => {
-    const filters = ctx.query.filters as Array<{ from?: number, to?: number }>;
-    // TODO: validate filters
+    // TODO: validate filters - Completed
     try {
+        const parsedQuery = filterSchema.parse(ctx.query);
+        const filters = parsedQuery.filters;
         const books = await adapter.listBooks(filters);
         ctx.body = books;
     } catch (error) {
@@ -43,27 +58,5 @@ router.get('/books', async (ctx) => {
         ctx.body = { error: `Failed to fetch books due to: ${error}` };
     }
 });
-
-function validateFilters(filters: any): boolean {
-    // Check if filters exist and are an array
-    if (!filters || !Array.isArray(filters)) {
-        return false;
-    }
-
-    // Check each filter object in the array
-    return filters.every(filter => {
-        const from = parseFloat(filter.from);
-        const to = parseFloat(filter.to);
-
-        // Validate that 'from' and 'to' are numbers
-        if (isNaN(from) || isNaN(to)) {
-            return false;
-        }
-
-        // Validate that 'from' is less than or equal to 'to'
-        return from <= to;
-    });
-}
-
 
 export default router;
