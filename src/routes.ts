@@ -28,10 +28,10 @@ const filterSchema = z.object({
         arr.every(
             (filter) =>
                 typeof filter === "object" &&
-            ("from" in filter ? typeof filter.from === "number" : true) &&
-            ("to" in filter ? typeof filter.to === "number" : true)
+            (filter.from === undefined || typeof filter.from === "number") &&
+            (filter.to === undefined || typeof filter.to === "number")
         ),
-        { message: "invalid filter" }
+        { message: "invalid input" }
     })
 })
 
