@@ -33,7 +33,7 @@ const filterSchema = z.object({
             return Array.isArray(parsed) ? parsed : [];
         } catch {
             return [];
-        }
+        } 
     })
     .refine((arr): arr is Array<{ from?: number; to?: number }> =>
         arr.every(
