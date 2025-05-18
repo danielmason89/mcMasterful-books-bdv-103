@@ -1,4 +1,5 @@
 import assignment1 from "./assignment-1";
+import { v4 as uuid } from "uuid";
 
 export type BookID = string;
 
@@ -11,8 +12,20 @@ export interface Book {
     image: string,
 };
 
+// In-memory store
+const books: Book[] = [];
+
+/**
+ * listBooks
+ * Returns all books or filters by price range if provided.
+ */
 async function listBooks(filters?: Array<{from?: number, to?: number}>) : Promise<Book[]>{
-    return assignment1.listBooks(filters);
+    const books = await assignment1.listBooks(filters);
+    return books.map(book => ({
+        ...book,
+        image: book.image ?? "",
+        description: book.description ?? ""
+    }));
 }
 
 async function createOrUpdateBook(book: Book): Promise<BookID> {
