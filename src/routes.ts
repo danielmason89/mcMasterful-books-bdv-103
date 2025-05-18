@@ -1,6 +1,7 @@
-import { z, ZodError } from "zod"
+import {promises as fs} from "fs";
+import path from "path";
 import createRouter from "koa-zod-router";
-import adapter from '../adapter';
+import { z, ZodError } from "zod"
 
 const router = createRouter();
 
@@ -46,6 +47,21 @@ const filterSchema = z.object({
     )
 })
 
+async function fetchBooksFromFile(filters?: { from?: number; to?: number }[]) {
+  const filePath = path.join(__dirname, '../mcmasteful-book-list.json');
+  const data = await fs.readFile(filePath, 'utf-8');
+  const books = JSON.parse(data);
+
+  if (!filters || filters.length === 0) return books;
+
+  return books.filter((book: any) =>
+    filters.some((filter) =>
+      (filter.from === undefined || book.price >= filter.from) &&
+      (filter.to === undefined || book.price <= filter.to)
+    )
+  );
+}
+
 // Health check route
 router.get('/', (ctx) => {
     ctx.body = { message: 'Hello World' };
@@ -61,8 +77,7 @@ router.get('/books', async (ctx) => {
     // TODO: validate filters - Completed
     try {
         const parsedQuery = filterSchema.parse(ctx.query);
-        const filters = parsedQuery.filters;
-        const books = await adapter.listBooks(filters);
+        const books = await fetchBooksFromFile(parsedQuery.filters);
         ctx.body = books;
     } catch (error) {
         // Handle validation errors
