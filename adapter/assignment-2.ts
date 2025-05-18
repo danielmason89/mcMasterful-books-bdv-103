@@ -46,8 +46,15 @@ async function createOrUpdateBook(book: Book): Promise<BookID> {
     return newBook.id;
 }
 
+/**
+ * removeBook
+ * Removes a book by ID from the list.
+ */
 async function removeBook(book: BookID): Promise<void> {
-    throw new Error("Todo")
+    const index = books.findIndex(b => b.id === book);
+    if ( index !== -1) {
+        books.splice(index, 1);
+    }
 }
 
 const assignment = "assignment-2";
