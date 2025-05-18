@@ -20,12 +20,16 @@ const books: Book[] = [];
  * Returns all books or filters by price range if provided.
  */
 async function listBooks(filters?: Array<{from?: number, to?: number}>) : Promise<Book[]>{
-    const books = await assignment1.listBooks(filters);
-    return books.map(book => ({
-        ...book,
-        image: book.image,
-        description: book.description
-    }));
+    let result = books;
+
+    if (filters?.length) {
+        result = books.filter(book =>
+            filters.some(({ from, to}) =>
+                (from === undefined || book.price >= from) &&
+                (to === undefined || book.price <= to))
+            );
+        }
+    return result;
 }
 
 /**
