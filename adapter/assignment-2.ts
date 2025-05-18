@@ -7,9 +7,9 @@ export interface Book {
     id?: BookID,
     name: string,
     author: string,
-    description: string,
+    description?: string,
     price: number,
-    image: string,
+    image?: string,
 };
 
 // In-memory store
@@ -23,13 +23,27 @@ async function listBooks(filters?: Array<{from?: number, to?: number}>) : Promis
     const books = await assignment1.listBooks(filters);
     return books.map(book => ({
         ...book,
-        image: book.image ?? "",
-        description: book.description ?? ""
+        image: book.image,
+        description: book.description
     }));
 }
 
+/**
+ * createOrUpdateBook
+ * Adds a new book if no ID exists, otherwise updates existing book.
+ */
 async function createOrUpdateBook(book: Book): Promise<BookID> {
-    throw new Error("Todo")
+    if (book.id) {
+        const index = books.findIndex(b => b.id === book.id);
+        if (index !== -1) {
+            books[index] = { ...books[index], ...book};
+            return book.id;
+        }
+    }
+
+    const newBook: Book & { id: BookID } = { ...book, id: uuid() };
+    books.push(newBook);
+    return newBook.id;
 }
 
 async function removeBook(book: BookID): Promise<void> {
