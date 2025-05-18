@@ -7,3 +7,13 @@ services:
     volumes:
       - ../..:/workspaces:cached
     command: sleep infinity
+  mongo:
+    image: mongo:latest
+    container_name: bookstore
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    restart: unless-stopped
+  volumes:
+    mongo-data
