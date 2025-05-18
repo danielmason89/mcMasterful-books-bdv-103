@@ -5,6 +5,7 @@
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
 	"dockerComposeFile": ["docker-compose.yml"],
 	"service": "dev",
+	"workspaceFolder": "/workspaces/mcMasterful-books-bdv-103",
 	"features": {
 		"ghcr.io/devcontainers-contrib/features/tsx:1": {},
 		"ghcr.io/mcmastercce/bvd-103-mcmasterful-books/mcmasterful-books:latest": {}

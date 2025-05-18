@@ -1,5 +1,3 @@
-import books from './../mcmasteful-book-list.json';
-
 /**
  * Book structure definition.
  * Matches the fields in the book JSON file.
