@@ -1,6 +1,6 @@
 import createRouter from "koa-zod-router";
 import { z, ZodError } from "zod"
-import adapter from "../adapter/assignment-2";
+import BookModel from './models/book';
 
 const router = createRouter();
 
@@ -79,21 +79,29 @@ router.get('/', (ctx) => {
  * If `filters` query param is provided, it filters books by price range.
  * Example: /books?filters=[{"from":10,"to":25}]
  */
-router.get('/books', async (ctx) => {
+router.get('/books', async ctx => {
   try {
     const parsedQuery = filterSchema.parse(ctx.query);
-    const books = await adapter.listBooks(parsedQuery.filters);
-    ctx.body = books;
-    } catch (err) {
-        // Handle validation errors
-        if (err instanceof ZodError) {
-            return handleZodError(ctx, err);
-          } else {
-        // Handle general server errors
-        ctx.status = 500;
-        ctx.body = { error: `Failed to fetch books due to: ${(err as Error).message}` };
+    const query: any = {};
+    if (parsedQuery.filters?.length) {
+      query.$or = parsedQuery.filters.map(({ from, to }) => ({
+        price: {
+          ...(from !== undefined ? { $gte: from } : {}),
+          ...(to !== undefined ? { $lte: to } : {}),
         }
+      }));
     }
+
+    const books = await BookModel.find(query);
+    ctx.body = books.map(book => ({
+      ...book.toObject(),
+      id: book._id.toString()
+    }));
+  } catch (err) {
+    if (err instanceof ZodError) return handleZodError(ctx, err);
+    ctx.status = 500;
+    ctx.body = { error: `Failed to fetch books due to: ${(err as Error).message}` };
+  }
 });
 
 /**
@@ -101,19 +109,39 @@ router.get('/books', async (ctx) => {
  * Adds a new book or updates an existing one.
  * Expects a valid book object in the request body.
  */
-router.post('/books', async (ctx) => {
+router.post('/books', async ctx => {
   try {
     const parsed = bookSchema.parse(ctx.request.body);
-    const id = await adapter.createOrUpdateBook(parsed);
-    ctx.status = parsed.id ? 200 : 201;
-    ctx.body = { id };
+    const created = await BookModel.create(parsed);
+    ctx.status = 201;
+    ctx.body = { id: created._id.toString() };
   } catch (err) {
-    if (err instanceof ZodError) {
-      return handleZodError(ctx, err);
-    } else {
-      ctx.status = 400;
-      ctx.body = { error: (err as Error).message };
-    }
+    if (err instanceof ZodError) return handleZodError(ctx, err);
+    ctx.status = 400;
+    ctx.body = { error: (err as Error).message };
+  }
+});
+
+/**
+ * PUT /books
+ * Updates an existing book by ID.
+ *
+ * Body: Book object including `id`
+ *
+ * Returns: { id: string } of the updated book
+ */
+router.put('/books', async ctx => {
+  try {
+    const parsed = bookSchema.parse(ctx.request.body);
+    if (!parsed.id) throw new Error("Missing book ID");
+
+    const updated = await BookModel.findByIdAndUpdate(parsed.id, parsed, { new: true });
+    ctx.status = 200;
+    ctx.body = { id: updated?._id.toString() ?? parsed.id };
+  } catch (err) {
+    if (err instanceof ZodError) return handleZodError(ctx, err);
+    ctx.status = 400;
+    ctx.body = { error: (err as Error).message };
   }
 });
 
@@ -121,15 +149,14 @@ router.post('/books', async (ctx) => {
  * DELETE /books/:id
  * Deletes a book with the given ID.
  */
-router.delete('/books/:id', async (ctx) => {
+router.delete('/books/:id', async ctx => {
   try {
     const id = ctx.params.id;
-    await adapter.removeBook(id);
+    await BookModel.findByIdAndDelete(id);
     ctx.status = 204;
   } catch (err) {
     ctx.status = 400;
     ctx.body = { error: (err as Error).message };
   }
 });
-
 export default router;

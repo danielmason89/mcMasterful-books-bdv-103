@@ -1,59 +1,76 @@
-import BookModel, { Book } from '../src/models/book';
+/**
+ * Book structure definition.
+ * Matches the fields in the book JSON file.
+ */
+export type BookID = string;
+
+export interface Book {
+  id?: BookID,
+  name: string,
+  author: string,
+  description: string,
+  price: number,
+  image: string,
+};
+
 
 /**
- * listBooks
- * Returns all books or filters by price range if provided.
+ * Filter type for optional price range queries.
+ */
+type PriceFilter = { from?: number; to?: number };
+const API_BASE = 'http://localhost:3000';
+
+/**
+ * Fetches a list of books from the backend.
+ * Optionally filters results by an array of price ranges.
+ *
+ * @param filters - Optional array of price range filters
+ * @returns A promise that resolves to an array of books
+ * @throws If the request fails or the server returns a non-OK status
  */
 async function listBooks(filters?: Array<{ from?: number; to?: number }>): Promise<Book[]> {
-  
-    const query: any = {};
-    if (filters?.length) {
-      query.$or = filters.map(({ from, to }) => ({
-        price: {
-          ...(from !== undefined ? { $gte: from } : {}),
-          ...(to !== undefined ? { $lte: to } : {})
-        }
-      }));
-    }
-    try {
-      const books = await BookModel.find(query);
-      return books.map((book: any) => ({
-        ...book.toObject(),
-        id: book._id.toString()
-      }));
-    } catch (err) {
-      console.error("❌ Error fetching books:", err);
-      throw err;
-    }
-  }
-  
+  const query = filters ? `?filters=${encodeURIComponent(JSON.stringify(filters))}` : "";
+  const res = await fetch(`${API_BASE}/books${query}`);
+  if (!res.ok) throw new Error("Failed to fetch books");
+  return res.json() as Promise<Book[]>;
+}
 
 /**
- * createOrUpdateBook
- * Adds a new book or updates an existing one.
+ * Creates a new book or updates an existing one based on the presence of an ID.
+ *
+ * - Sends a POST request to create a book
+ * - Sends a PUT request to update an existing book
+ *
+ * @param book - Book data, including optional `id` for updates
+ * @returns A promise that resolves to the ID of the created or updated book
+ * @throws If the request fails or the server returns a non-OK status
  */
 async function createOrUpdateBook(book: Book & { id?: string }): Promise<string> {
-  
-    if (book.id) {
-      const updated = await BookModel.findByIdAndUpdate(book.id, book, { new: true }) as any;
-      return updated?._id?.toString() ?? book.id;
-    } else {
-      const created = await BookModel.create(book) as any;
-      return created._id?.toString();
-    }
-  }
-  
-  /**
-   * removeBook
-   * Deletes a book from the database by ID.
-   */
-  async function removeBook(bookId: string): Promise<void> {
-    await BookModel.findByIdAndDelete(bookId);
-  }
+  const method = book.id ? "PUT" : "POST";
+  const res = await fetch(`${API_BASE}/books`, {
+    method,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(book),
+  });
+  if (!res.ok) throw new Error("Failed to save book");
+  const { id } = await res.json() as { id: string };
+  return id;
+}
 
+/**
+ * Deletes a book by its unique ID.
+ *
+ * @param bookId - The ID of the book to be deleted
+ * @returns A promise that resolves when deletion is complete
+ * @throws If the request fails or the server returns a non-OK status
+ */
+async function removeBook(bookId: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/books/${bookId}`, { method: "DELETE" });
+  if (!res.ok) throw new Error("Failed to delete book");
+}
 
 export default {
-    createOrUpdateBook,
-    removeBook,
-    listBooks
+  listBooks,
+  createOrUpdateBook,
+  removeBook,
 };

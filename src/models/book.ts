@@ -1,25 +1,6 @@
-import mongoose, { Schema, Document, Model } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
-export type BookID = string;
-
-export interface Book {
-  id?: BookID;
-  name: string;
-  author: string;
-  description?: string;
-  price: number;
-  image?: string;
-}
-
-interface BookDoc extends Document {
-  name: string;
-  author: string;
-  description?: string;
-  price: number;
-  image?: string;
-}
-
-const bookSchema: Schema<BookDoc> = new Schema({
+const bookSchema = new Schema({
   name: { type: String, required: true },
   author: { type: String, required: true },
   description: String,
@@ -28,7 +9,7 @@ const bookSchema: Schema<BookDoc> = new Schema({
 }, { timestamps: true });
 
 
-const BookModel: Model<BookDoc> =
-  (mongoose.models?.Book as Model<BookDoc>) || mongoose.model<BookDoc>('Book', bookSchema);
+const BookModel =
+  (mongoose.models?.Book) || mongoose.model('Book', bookSchema);
 
 export default BookModel;
