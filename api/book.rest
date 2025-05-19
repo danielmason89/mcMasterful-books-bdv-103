@@ -1,5 +1,47 @@
-###
-GET http://localhost:3000/books
+### GET all books
+GET http://localhost:3000/books HTTP/1.1
+User-Agent: vscode-restclient
+Accept: application/json
 
 ###
-GET http://localhost:3000/books?filters[0][from]=20&filters[0][to]=40
+
+### GET books filtered by price range (e.g., between $20 and $40)
+GET http://localhost:3000/books?filters=[{"from":20,"to":40}] HTTP/1.1
+User-Agent: vscode-restclient
+Accept: application/json
+
+###
+
+### POST create a new book
+POST http://localhost:3000/books HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Clean Code",
+  "author": "Robert C. Martin",
+  "description": "A Handbook of Agile Software Craftsmanship",
+  "price": 45,
+  "image": "https://example.com/cleancode.jpg"
+}
+
+###
+
+### POST update an existing book
+# Replace the ID with a real one from your DB (e.g., from the GET response)
+POST http://localhost:3000/books HTTP/1.1
+Content-Type: application/json
+
+{
+  "id": "664b472f17cd8f3fbd378bca",
+  "name": "Clean Code (2nd Edition)",
+  "author": "Robert C. Martin",
+  "description": "Updated and improved edition",
+  "price": 50,
+  "image": "https://example.com/cleancode2.jpg"
+}
+
+###
+
+### DELETE a book by ID
+# Replace the ID with a valid one from your DB
+DELETE http://localhost:3000/books/664b472f17cd8f3fbd378bca HTTP/1.1

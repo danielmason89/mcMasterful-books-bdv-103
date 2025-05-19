@@ -1,20 +1,4 @@
-import BookModel from '../src/models/book';
-
-export type BookID = string;
-
-export interface Book {
-    id?: BookID,
-    name: string,
-    author: string,
-    description?: string,
-    price: number,
-    image?: string,
-};
-
-// In-memory store
-const books: Book[] = [];
-
-const assignment = "assignment-2";
+import BookModel, { Book } from '../src/models/book';
 
 /**
  * listBooks
@@ -31,11 +15,16 @@ async function listBooks(filters?: Array<{ from?: number; to?: number }>): Promi
         }
       }));
     }
-    
-    return books.map((book: any) => ({
-      ...book,
-      id: book._id.toString()
-    }));
+    try {
+      const books = await BookModel.find(query);
+      return books.map((book: any) => ({
+        ...book.toObject(),
+        id: book._id.toString()
+      }));
+    } catch (err) {
+      console.error("❌ Error fetching books:", err);
+      throw err;
+    }
   }
   
 
@@ -46,11 +35,11 @@ async function listBooks(filters?: Array<{ from?: number; to?: number }>): Promi
 async function createOrUpdateBook(book: Book & { id?: string }): Promise<string> {
   
     if (book.id) {
-      const updated = await BookModel.findByIdAndUpdate(book.id, book, { new: true });
-      return updated?._id.toString() ?? book.id;
+      const updated = await BookModel.findByIdAndUpdate(book.id, book, { new: true }) as any;
+      return updated?._id?.toString() ?? book.id;
     } else {
-      const created = await BookModel.create(book);
-      return created._id.toString();
+      const created = await BookModel.create(book) as any;
+      return created._id?.toString();
     }
   }
   
@@ -64,7 +53,6 @@ async function createOrUpdateBook(book: Book & { id?: string }): Promise<string>
 
 
 export default {
-    assignment,
     createOrUpdateBook,
     removeBook,
     listBooks

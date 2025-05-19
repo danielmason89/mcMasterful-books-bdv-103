@@ -1,4 +1,5 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema, Document, Model } from 'mongoose';
+
 export type BookID = string;
 
 export interface Book {
@@ -10,7 +11,15 @@ export interface Book {
   image?: string;
 }
 
-const bookSchema = new mongoose.Schema<Book>({
+interface BookDoc extends Document {
+  name: string;
+  author: string;
+  description?: string;
+  price: number;
+  image?: string;
+}
+
+const bookSchema: Schema<BookDoc> = new Schema({
   name: { type: String, required: true },
   author: { type: String, required: true },
   description: String,
@@ -18,6 +27,8 @@ const bookSchema = new mongoose.Schema<Book>({
   image: String
 }, { timestamps: true });
 
-const BookModel = mongoose.model('Book', bookSchema);
+
+const BookModel: Model<BookDoc> =
+  (mongoose.models?.Book as Model<BookDoc>) || mongoose.model<BookDoc>('Book', bookSchema);
 
 export default BookModel;

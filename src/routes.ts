@@ -70,7 +70,7 @@ const bookSchema = z.object({
  * Simple endpoint to confirm the server is running.
  */
 router.get('/', (ctx) => {
-  ctx.body = { message: 'Hello World' };
+  ctx.body = { message: 'Hello There, Welcome to Assignment #2 BookStore API!' };
 });
 
 /**
@@ -80,7 +80,6 @@ router.get('/', (ctx) => {
  * Example: /books?filters=[{"from":10,"to":25}]
  */
 router.get('/books', async (ctx) => {
-  // TODO: validate filters - Completed
   try {
     const parsedQuery = filterSchema.parse(ctx.query);
     const books = await adapter.listBooks(parsedQuery.filters);
@@ -92,7 +91,7 @@ router.get('/books', async (ctx) => {
           } else {
         // Handle general server errors
         ctx.status = 500;
-        ctx.body = { error: `Internal server error` };
+        ctx.body = { error: `Failed to fetch books due to: ${(err as Error).message}` };
         }
     }
 });
@@ -106,6 +105,7 @@ router.post('/books', async (ctx) => {
   try {
     const parsed = bookSchema.parse(ctx.request.body);
     const id = await adapter.createOrUpdateBook(parsed);
+    ctx.status = parsed.id ? 200 : 201;
     ctx.body = { id };
   } catch (err) {
     if (err instanceof ZodError) {
