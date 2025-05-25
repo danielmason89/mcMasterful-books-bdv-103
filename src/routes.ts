@@ -2,6 +2,7 @@ import createRouter from 'koa-zod-router';
 import { z, ZodError } from 'zod';
 import BookModel from './models/book';
 import { Context } from 'koa';
+import assignment3 from '../adapter/assignment-3';
 
 const router = createRouter();
 
@@ -93,21 +94,8 @@ router.get('/', (ctx) => {
 router.get('/books', async (ctx) => {
   try {
     const parsedQuery = filterSchema.parse(ctx.query);
-    const query: Record<string, unknown> = {};
-    if (parsedQuery.filters?.length) {
-      query.$or = parsedQuery.filters.map(({ from, to }) => ({
-        price: {
-          ...(from !== undefined ? { $gte: from } : {}),
-          ...(to !== undefined ? { $lte: to } : {})
-        }
-      }));
-    }
-
-    const books = await BookModel.find(query);
-    ctx.body = books.map((book) => ({
-      ...book.toObject(),
-      id: book._id.toString()
-    }));
+    const books = await assignment3.listBooks(parsedQuery.filters);
+    ctx.body = books;
   } catch (err) {
     if (err instanceof ZodError) return handleZodError(ctx, err);
     ctx.status = 500;
