@@ -1,3 +1,8 @@
+/**
+ * Entry point of the Koa server.
+ * Connects to MongoDB and starts the API server on a specified port.
+ */
+
 import Koa from 'koa';
 import cors from '@koa/cors';
 import bodyParser from 'koa-bodyparser';

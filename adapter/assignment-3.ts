@@ -1,3 +1,8 @@
+/**
+ * Adapter implementation for Assignment 3.
+ * Extends functionality from Assignment 2 and implements advanced filtering
+ * capabilities for listing books.
+ */
 import previous_assignment from './assignment-2'
 import BookModel from '../src/models/book'
 
@@ -21,6 +26,12 @@ export interface Filter {
 
 // If multiple filters are provided, any book that matches at least one of them should be returned
 // Within a single filter, a book would need to match all the given conditions
+/**
+ * Retrieves a list of books based on one or more filters.
+ * - If no filters are provided, all books are returned.
+ * - If filters are provided, books matching *any* of the filters are returned.
+ * - Within each filter object, all conditions must be met (AND logic).
+ */
 async function listBooks (filters?: Filter[]): Promise<Book[]> {
   if (!filters || filters.length === 0) {
     const allBooks = await BookModel.find({});
@@ -48,6 +59,7 @@ async function listBooks (filters?: Filter[]): Promise<Book[]> {
   return books.map((b) => ({ ...b.toObject(), id: b._id.toString() }));
 }
 
+// Delegated to previous assignment's logic
 async function createOrUpdateBook (book: Book): Promise<BookID> {
   return await previous_assignment.createOrUpdateBook(book)
 }

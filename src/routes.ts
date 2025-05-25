@@ -1,3 +1,9 @@
+/**
+ * Defines all the routes used in the Bookstore API.
+ * Includes book listing, creation, update, and deletion.
+ * Uses Zod for schema validation.
+ */
+
 import createRouter from 'koa-zod-router';
 import { z, ZodError } from 'zod';
 import BookModel from './models/book';
@@ -6,6 +12,9 @@ import assignment3 from '../adapter/assignment-3';
 
 const router = createRouter();
 
+/**
+ * Centralized error handler for Zod validation errors.
+ */
 export function handleZodError(
   ctx: Context,
   error: ZodError,
