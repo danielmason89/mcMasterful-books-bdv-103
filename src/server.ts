@@ -1,5 +1,5 @@
 import Koa from 'koa';
-import cors from "@koa/cors";
+import cors from '@koa/cors';
 import bodyParser from 'koa-bodyparser';
 import qs from 'koa-qs';
 import routes from './routes';
@@ -22,6 +22,6 @@ connectToDatabase()
     });
   })
   .catch((err) => {
-    console.error("❌ Failed to connect to MongoDB:", err);
+    console.error('❌ Failed to connect to MongoDB:', err);
     process.exit(1);
   });

@@ -17,7 +17,6 @@ export interface Book {
 /**
  * Filter type for optional price range queries.
  */
-type PriceFilter = { from?: number; to?: number };
 const API_BASE = 'http://localhost:3000';
 
 /**
