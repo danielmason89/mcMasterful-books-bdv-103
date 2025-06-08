@@ -1,33 +1,62 @@
-import { describe, it, expect, beforeAll } from 'vitest'
-import assignment from '../adapter/assignment-4.js'
+import { describe, it, beforeEach, expect } from 'vitest'
+import assignment4 from '../adapter/assignment-4.js'
 import BookModel from '../src/models/book.js'
+import ShelfModel from '../src/models/shelf.js'
 
-describe('listBooks()', () => {
-  beforeAll(async () => {
+describe('assignment-4: listBooks', () => {
+  let bookId1: string
+  let bookId2: string
+
+  beforeEach(async () => {
+    // Clean test DB
     await BookModel.deleteMany({})
-    await BookModel.create([
-      { name: 'Book A', author: 'Alice', price: 10, image: '', description: '' },
-      { name: 'Book B', author: 'Bob', price: 20, image: '', description: '' },
-      { name: 'Book C', author: 'Alice', price: 30, image: '', description: '' }
+    await ShelfModel.deleteMany({})
+
+    // Create books
+    const book1 = await BookModel.create({
+      name: 'Stock Book A',
+      author: 'Test Author',
+      description: 'Testing stock',
+      price: 20,
+      image: 'image-a.jpg'
+    })
+
+    const book2 = await BookModel.create({
+      name: 'Stock Book B',
+      author: 'Another Author',
+      description: 'More testing',
+      price: 35,
+      image: 'image-b.jpg'
+    })
+
+    bookId1 = book1._id.toString()
+    bookId2 = book2._id.toString()
+
+    // Add books to shelves
+    await ShelfModel.insertMany([
+      { bookId: bookId1, shelf: 'Shelf1', count: 3 },
+      { bookId: bookId1, shelf: 'Shelf2', count: 2 },
+      { bookId: bookId2, shelf: 'Shelf1', count: 5 }
     ])
   })
 
-  it('returns all books if no filters are provided', async () => {
-    const books = await assignment.listBooks()
-    expect(books).toHaveLength(3)
+  it('returns books with correct stock levels', async () => {
+    const books = await assignment4.listBooks()
+
+    const bookA = books.find((b: { id?: string }) => b.id === bookId1)
+    const bookB = books.find((b: { id?: string }) => b.id === bookId2)
+
+    expect(bookA).toBeDefined()
+    expect(bookB).toBeDefined()
+
+    expect(bookA?.stock).toBe(5) // 3 + 2
+    expect(bookB?.stock).toBe(5) // 5
   })
 
-  it('filters books by price range', async () => {
-    const books = await assignment.listBooks([{ from: 15, to: 25 }])
-    expect(books).toHaveLength(1)
-    expect(books[0].name).toBe('Book B')
-  })
-
-  it('returns books that match at least one of multiple filters', async () => {
-    const books = await assignment.listBooks([
-      { author: 'Alice' },
-      { from: 25 }
-    ])
-    expect(books.length).toBeGreaterThanOrEqual(2)
+  it('applies filters correctly and still includes stock', async () => {
+    const filtered = await assignment4.listBooks([{ from: 30 }])
+    expect(filtered.length).toBe(1)
+    expect(filtered[0].name).toBe('Stock Book B')
+    expect(filtered[0].stock).toBe(5)
   })
 })

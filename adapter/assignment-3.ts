@@ -33,6 +33,7 @@ export interface Filter {
  * - Within each filter object, all conditions must be met (AND logic).
  */
 async function listBooks (filters?: Filter[]): Promise<Book[]> {
+  
   if (!filters || filters.length === 0) {
     const allBooks = await BookModel.find({});
     return allBooks.map((b) => ({ ...b.toObject(), id: b._id.toString() }));

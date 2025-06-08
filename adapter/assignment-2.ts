@@ -13,7 +13,6 @@ export interface Book {
   image: string,
 };
 
-
 /**
  * Filter type for optional price range queries.
  */
