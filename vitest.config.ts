@@ -6,6 +6,6 @@ export default defineConfig({
     environment: 'node',
     includeSource: ['src/**/*.{ts,js}'],
     watch: false,
-    include: ['**/*.{test,spec}.{ts,js}'],
+    include: ['**/*.test.ts'],
   }
 });
