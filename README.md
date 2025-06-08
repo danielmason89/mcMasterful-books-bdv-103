@@ -1,6 +1,6 @@
-# 📚 Assignment 3: Improving Iterations — Bookstore API
+# 📚 Assignment 4: Supporting the Warehouse — Bookstore API
 
-This is the third assignment for **BDV 103: Advanced JavaScript through Node.js** at McMaster University Continuing Education. The objective was to enhance the Bookstore API project by adding CI/CD workflows, static analysis tooling, and advanced book filtering capabilities.
+This is the fourth assignment for **BDV 103: Advanced JavaScript through Node.js** at McMaster University Continuing Education. The objective was to add tests to our CI pipeline and use them to help us build and design an initial API for the McMasterful Books warehouse.
 
 ## ✅ Features Implemented
 
@@ -24,7 +24,7 @@ This is the third assignment for **BDV 103: Advanced JavaScript through Node.js*
 
 - Node.js v18+ or v20+
 - Docker (if using MongoDB in a container)
-- MongoDB running on `mongodb://mongo:27017/booksdb` or a compatible URI
+- MongoDB running on `mongodb://mongo:27017/booksdb`
 
 ### Install Dependencies
 

@@ -6,9 +6,9 @@
 
 import createRouter from 'koa-zod-router';
 import { z, ZodError } from 'zod';
-import BookModel from './models/book';
+import BookModel from './models/book.js';
 import { Context } from 'koa';
-import assignment3 from '../adapter/assignment-3';
+import assignment3 from '../adapter/assignment-3.js';
 
 const router = createRouter();
 

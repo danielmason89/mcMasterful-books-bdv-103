@@ -7,12 +7,12 @@
     "lib": ["es2023"],
     "module": "node16",
     "target": "es2022",
-
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node16",
+    "inlineSourceMap": true,
     "resolveJsonModule": true,
   }
 }

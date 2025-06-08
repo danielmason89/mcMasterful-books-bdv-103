@@ -2,11 +2,9 @@ name: CI
 
 on:
   push:
-    branches:
-      - '**'
+    branches: [main]
   pull_request:
-    branches:
-      - '**'
+    branches: [main]
 
 jobs:
   lint:
@@ -65,3 +63,6 @@ jobs:
 
       - name: Run Type Check
         run: npm run type-check
+
+      - name: Run tests
+        run: npm run test:ci

@@ -7,8 +7,8 @@ import Koa from 'koa';
 import cors from '@koa/cors';
 import bodyParser from 'koa-bodyparser';
 import qs from 'koa-qs';
-import routes from './routes';
-import { connectToDatabase } from './lib/db';
+import routes from './routes.js';
+import { connectToDatabase } from './lib/db.js';
 
 const app = new Koa();
 app.use(cors());

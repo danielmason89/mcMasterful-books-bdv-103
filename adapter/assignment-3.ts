@@ -3,8 +3,8 @@
  * Extends functionality from Assignment 2 and implements advanced filtering
  * capabilities for listing books.
  */
-import previous_assignment from './assignment-2'
-import BookModel from '../src/models/book'
+import previous_assignment from './assignment-2.js'
+import BookModel from '../src/models/book.js'
 
 export type BookID = string
 
