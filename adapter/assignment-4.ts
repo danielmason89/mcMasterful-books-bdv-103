@@ -34,13 +34,13 @@ async function listBooks(filters?: Filter[]): Promise<Book[]> {
   }
 
   let enrichedBooks: Book[] = Array.isArray(books) ? books.map((book: { _id: string } & Book) => ({
-    id: book._id,
+    id: book._id.toString(),
     name: book.name,
     author: book.author,
     description: book.description,
     price: book.price,
     image: book.image,
-    stock: stockMap[book._id] || 0
+    stock: stockMap[book._id.toString()] || 0
   })) : []
 
   if (filters && filters.length > 0) {
