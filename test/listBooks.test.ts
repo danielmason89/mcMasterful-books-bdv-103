@@ -5,6 +5,13 @@ import { describe, it, beforeEach, expect } from 'vitest'
 import BookModel from '../src/models/book.js'
 import ShelfModel from '../src/models/shelf.js'
 
+import { beforeAll } from 'vitest'
+import { connectToDatabase } from '../src/lib/db.js'
+
+beforeAll(async () => {
+  await connectToDatabase()
+})
+
 describe('assignment-4: listBooks', () => {
   let bookId1: string
   let bookId2: string
@@ -36,9 +43,9 @@ describe('assignment-4: listBooks', () => {
 
     // Add books to shelves
     await ShelfModel.insertMany([
-      { bookId: bookId1, shelf: 'Shelf1', count: 3 },
-      { bookId: bookId1, shelf: 'Shelf2', count: 2 },
-      { bookId: bookId2, shelf: 'Shelf1', count: 5 }
+      { bookId: bookId1, shelf: 1, count: 3 },
+      { bookId: bookId1, shelf: 2, count: 2 },
+      { bookId: bookId2, shelf: 3, count: 5 }
     ])
   })
 

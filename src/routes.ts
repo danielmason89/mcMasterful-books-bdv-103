@@ -90,7 +90,7 @@ const bookSchema = z.object({
  */
 router.get('/', (ctx) => {
   ctx.body = {
-    message: 'Hello There, Welcome to Assignment #3 BookStore API!'
+    message: 'Hello There, Welcome to Assignment #4 BookStore API!'
   };
 });
 

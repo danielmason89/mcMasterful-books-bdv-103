@@ -4,6 +4,13 @@ import BookModel from '../src/models/book.js'
 
 import { describe, it, expect, beforeEach } from 'vitest'
 
+import { beforeAll } from 'vitest'
+import { connectToDatabase } from '../src/lib/db.js'
+
+beforeAll(async () => {
+  await connectToDatabase()
+})
+
 describe('createOrUpdateBook() and removeBook()', () => {
   beforeEach(async () => {
     await BookModel.deleteMany({})

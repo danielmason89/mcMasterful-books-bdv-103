@@ -105,7 +105,7 @@ async function fulfilOrder (orderId: OrderId, booksFulfilled: Array<{ book: Book
       throw new Error(`Not enough stock for book ${book} on shelf ${shelf}`)
     }
 
-    shelfEntry.count = String(Number(shelfEntry.count) - numberOfBooks);
+    shelfEntry.count = Number(shelfEntry.count) - numberOfBooks;
     if (Number(shelfEntry.count) === 0) {
       await shelfEntry.deleteOne()
     } else {
