@@ -1,6 +1,6 @@
 import previous_assignment from './assignment-3.js'
 import BookModel from '../src/models/book.js'
-import { warehouse } from '../src/adapters/warehoues.js'
+import { warehouse } from '../src/adapters/warehouse.js'
 import { order } from '../src/adapters/order.js'
 
 // Types

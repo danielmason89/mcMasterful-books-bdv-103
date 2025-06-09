@@ -1,3 +1,4 @@
+
 /**
  * Book structure definition.
  * Matches the fields in the book JSON file.
@@ -43,16 +44,22 @@ async function listBooks(filters?: Array<{ from?: number; to?: number }>): Promi
  * @returns A promise that resolves to the ID of the created or updated book
  * @throws If the request fails or the server returns a non-OK status
  */
-async function createOrUpdateBook(book: Book & { id?: string }): Promise<string> {
-  const method = book.id ? "PUT" : "POST";
-  const res = await fetch(`${API_BASE}/books`, {
+async function createOrUpdateBook(book: Book): Promise<BookID> {
+  const hasId = !!book.id;
+  const url = hasId
+    ? `${API_BASE}/books/${encodeURIComponent(book.id!)}`
+    : `${API_BASE}/books`;
+  const method = hasId ? "PUT" : "POST";
+  const res = await fetch(url, {
     method,
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(book),
   });
-  if (!res.ok) throw new Error("Failed to save book");
-  const { id } = await res.json() as { id: string };
-  return id;
+  if (!res.ok) throw new Error(`Failed to ${hasId ? "update" : "create"} book`);
+  const data = await res.json() as { id?: BookID; _id?: BookID };
+  const bookId = data.id || data._id;
+  if (!bookId) throw new Error("Response did not include a book ID");
+  return bookId;
 }
 
 /**
@@ -62,8 +69,10 @@ async function createOrUpdateBook(book: Book & { id?: string }): Promise<string>
  * @returns A promise that resolves when deletion is complete
  * @throws If the request fails or the server returns a non-OK status
  */
-async function removeBook(bookId: string): Promise<void> {
-  const res = await fetch(`${API_BASE}/books/${bookId}`, { method: "DELETE" });
+async function removeBook(bookId: BookID): Promise<void> {
+  const res = await fetch(`${API_BASE}/books/${encodeURIComponent(bookId)}`, {
+    method: "DELETE",
+  });
   if (!res.ok) throw new Error("Failed to delete book");
 }
 
