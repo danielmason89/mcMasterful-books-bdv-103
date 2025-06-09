@@ -13,44 +13,61 @@ export interface Book {
   price: number
   image: string
   stock?: number
-};
+}
 
 export interface Filter {
   from?: number
   to?: number
   name?: string
   author?: string
-};
+}
 
 // If multiple filters are provided, any book that matches at least one of them should be returned
 // Within a single filter, a book would need to match all the given conditions
-async function listBooks (filters?: Filter[]): Promise<Book[]> {
-  const books = await previous_assignment.listBooks(filters)
+async function listBooks(filters?: Filter[]): Promise<Book[]> {
+  const books = await BookModel.find().lean()
+  const shelves = await ShelfModel.find().lean()
 
-  const shelves = await ShelfModel.find()
   const stockMap: Record<string, number> = {}
-
   for (const shelf of shelves) {
     const bookId = shelf.bookId?.toString?.() ?? ''
-    const count = typeof shelf.count === "number" ? shelf.count : Number(shelf.count);
+    const count = typeof shelf.count === 'number' ? shelf.count : Number(shelf.count)
     stockMap[bookId] = (stockMap[bookId] || 0) + count
   }
 
-  return books.map(book => ({
-    ...book,
-    stock: stockMap[book.id ?? ''] || 0
+  let enrichedBooks: Book[] = books.map(book => ({
+    id: book._id.toString(),
+    name: book.name,
+    author: book.author,
+    description: book.description,
+    price: book.price,
+    image: book.image,
+    stock: stockMap[book._id.toString()] || 0
   }))
+
+  if (filters && filters.length > 0) {
+    enrichedBooks = enrichedBooks.filter(book =>
+      filters.some(filter =>
+        (!filter.name || book.name.includes(filter.name)) &&
+        (!filter.author || book.author.includes(filter.author)) &&
+        (filter.from === undefined || book.price >= filter.from) &&
+        (filter.to === undefined || book.price <= filter.to)
+      )
+    )
+  }
+
+  return enrichedBooks
 }
 
-async function createOrUpdateBook (book: Book): Promise<BookID> {
+async function createOrUpdateBook(book: Book): Promise<BookID> {
   return await previous_assignment.createOrUpdateBook(book)
 }
 
-async function removeBook (book: BookID): Promise<void> {
+async function removeBook(book: BookID): Promise<void> {
   await previous_assignment.removeBook(book)
 }
 
-async function lookupBookById (bookId: BookID): Promise<Book> {
+async function lookupBookById(bookId: BookID): Promise<Book> {
   const book = await BookModel.findById(bookId)
   if (!book) throw new Error('Book not found')
 
@@ -67,7 +84,7 @@ async function lookupBookById (bookId: BookID): Promise<Book> {
 export type ShelfId = string
 export type OrderId = string
 
-async function placeBooksOnShelf (bookId: BookID, numberOfBooks: number, shelf: ShelfId): Promise<void> {
+async function placeBooksOnShelf(bookId: BookID, numberOfBooks: number, shelf: ShelfId): Promise<void> {
   const existing = await ShelfModel.findOne({ bookId, shelf })
   if (existing) {
     existing.count += numberOfBooks
@@ -77,7 +94,7 @@ async function placeBooksOnShelf (bookId: BookID, numberOfBooks: number, shelf: 
   }
 }
 
-async function orderBooks (order: BookID[]): Promise<{ orderId: OrderId }> {
+async function orderBooks(order: BookID[]): Promise<{ orderId: OrderId }> {
   const orderMap: Record<BookID, number> = {}
   for (const bookId of order) {
     orderMap[bookId] = (orderMap[bookId] || 0) + 1
@@ -87,7 +104,7 @@ async function orderBooks (order: BookID[]): Promise<{ orderId: OrderId }> {
   return { orderId: orderDoc._id.toString() }
 }
 
-async function findBookOnShelf (bookId: BookID): Promise<Array<{ shelf: ShelfId, count: number }>> {
+async function findBookOnShelf(bookId: BookID): Promise<Array<{ shelf: ShelfId, count: number }>> {
   const entries = await ShelfModel.find({ bookId })
   return entries.map(entry => ({
     shelf: entry.shelf.toString(),
@@ -95,7 +112,7 @@ async function findBookOnShelf (bookId: BookID): Promise<Array<{ shelf: ShelfId,
   }))
 }
 
-async function fulfilOrder (orderId: OrderId, booksFulfilled: Array<{ book: BookID, shelf: ShelfId, numberOfBooks: number }>): Promise<void> {
+async function fulfilOrder(orderId: OrderId, booksFulfilled: Array<{ book: BookID, shelf: ShelfId, numberOfBooks: number }>): Promise<void> {
   const order = await OrderModel.findById(orderId)
   if (!order) throw new Error('Order not found')
 
@@ -105,8 +122,8 @@ async function fulfilOrder (orderId: OrderId, booksFulfilled: Array<{ book: Book
       throw new Error(`Not enough stock for book ${book} on shelf ${shelf}`)
     }
 
-    shelfEntry.count = Number(shelfEntry.count) - numberOfBooks;
-    if (Number(shelfEntry.count) === 0) {
+    shelfEntry.count = Number(shelfEntry.count) - numberOfBooks
+    if (shelfEntry.count === 0) {
       await shelfEntry.deleteOne()
     } else {
       await shelfEntry.save()
@@ -114,7 +131,7 @@ async function fulfilOrder (orderId: OrderId, booksFulfilled: Array<{ book: Book
   }
 }
 
-async function listOrders (): Promise<Array<{ orderId: OrderId, books: Record<BookID, number> }>> {
+async function listOrders(): Promise<Array<{ orderId: OrderId, books: Record<BookID, number> }>> {
   const orders = await OrderModel.find()
   return orders.map(order => ({
     orderId: order._id.toString(),
