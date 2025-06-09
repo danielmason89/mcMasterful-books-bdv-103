@@ -1,5 +1,7 @@
-import { describe, it, beforeEach, expect } from 'vitest'
 import assignment4 from '../adapter/assignment-4.js'
+
+import { describe, it, beforeEach, expect } from 'vitest'
+
 import BookModel from '../src/models/book.js'
 import ShelfModel from '../src/models/shelf.js'
 

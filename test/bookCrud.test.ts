@@ -1,6 +1,8 @@
-import { describe, it, expect, beforeEach } from 'vitest'
 import assignment from '../adapter/assignment-4.js'
+
 import BookModel from '../src/models/book.js'
+
+import { describe, it, expect, beforeEach } from 'vitest'
 
 describe('createOrUpdateBook() and removeBook()', () => {
   beforeEach(async () => {

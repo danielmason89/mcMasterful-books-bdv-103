@@ -87,16 +87,39 @@ async function orderBooks (order: BookID[]): Promise<{ orderId: OrderId }> {
   return { orderId: orderDoc._id.toString() }
 }
 
-async function findBookOnShelf (book: BookID): Promise<Array<{ shelf: ShelfId, count: number }>> {
-  throw new Error("Todo")
+async function findBookOnShelf (bookId: BookID): Promise<Array<{ shelf: ShelfId, count: number }>> {
+  const entries = await ShelfModel.find({ bookId })
+  return entries.map(entry => ({
+    shelf: entry.shelf.toString(),
+    count: Number(entry.count)
+  }))
 }
 
-async function fulfilOrder (order: OrderId, booksFulfilled: Array<{ book: BookID, shelf: ShelfId, numberOfBooks: number }>): Promise<void> {
-  throw new Error("Todo")
+async function fulfilOrder (orderId: OrderId, booksFulfilled: Array<{ book: BookID, shelf: ShelfId, numberOfBooks: number }>): Promise<void> {
+  const order = await OrderModel.findById(orderId)
+  if (!order) throw new Error('Order not found')
+
+  for (const { book, shelf, numberOfBooks } of booksFulfilled) {
+    const shelfEntry = await ShelfModel.findOne({ bookId: book, shelf })
+    if (!shelfEntry || Number(shelfEntry.count) < numberOfBooks) {
+      throw new Error(`Not enough stock for book ${book} on shelf ${shelf}`)
+    }
+
+    shelfEntry.count = String(Number(shelfEntry.count) - numberOfBooks);
+    if (Number(shelfEntry.count) === 0) {
+      await shelfEntry.deleteOne()
+    } else {
+      await shelfEntry.save()
+    }
+  }
 }
 
 async function listOrders (): Promise<Array<{ orderId: OrderId, books: Record<BookID, number> }>> {
-  throw new Error("Todo")
+  const orders = await OrderModel.find()
+  return orders.map(order => ({
+    orderId: order._id.toString(),
+    books: Object.fromEntries(order.books)
+  }))
 }
 
 const assignment = 'assignment-4'
