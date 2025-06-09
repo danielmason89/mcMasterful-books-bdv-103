@@ -15,8 +15,8 @@ beforeAll(async () => {
 it('returns book with total stock from shelves', async () => {
   const book = await BookModel.create({ name: 'Single Book', author: 'Lookup', description: '', image: '', price: 10 })
   await ShelfModel.insertMany([
-    { bookId: book._id.toString(), shelf: 1, count: 2 },
-    { bookId: book._id.toString(), shelf: 1, count: 1 }
+    { bookId: book._id.toString(), shelf: "1", count: 2 },
+    { bookId: book._id.toString(), shelf: "1", count: 1 }
   ])
 
   const result = await assignment4.lookupBookById(book._id.toString())

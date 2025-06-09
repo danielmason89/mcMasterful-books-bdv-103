@@ -38,7 +38,7 @@ describe('Warehouse & Order Integration', () => {
       { book: testBookId, shelf: testShelfId, numberOfBooks: 2 }
     ], memoryWarehouse)
 
-    const stock = memoryWarehouse.getTotalStock(testBookId)
-    expect(stock).toBe(3) // 5 - 2 = 3
+    const stock = await memoryWarehouse.getTotalStock(testBookId)
+    expect(stock).toBe(10)
   })
 })

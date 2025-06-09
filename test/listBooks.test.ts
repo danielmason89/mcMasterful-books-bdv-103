@@ -43,9 +43,9 @@ describe('assignment-4: listBooks', () => {
 
     // Add books to shelves
     await ShelfModel.insertMany([
-      { bookId: bookId1, shelf: 1, count: 3 },
-      { bookId: bookId1, shelf: 2, count: 2 },
-      { bookId: bookId2, shelf: 3, count: 5 }
+      { bookId: bookId1, shelf: "1", count: 3 },
+      { bookId: bookId1, shelf: "2", count: 2 },
+      { bookId: bookId2, shelf: "3", count: 5 }
     ])
   })
 

@@ -14,9 +14,10 @@ beforeAll(async () => {
 
 it('fulfills an order by updating shelf stock', async () => {
   const book = await BookModel.create({ name: 'Fulfill', author: 'Some Author', description: '', image: '', price: 10 })
-  await ShelfModel.create({ bookId: book._id.toString(), shelf: 1, count: 3 })
+  await ShelfModel.create({ bookId: book._id.toString(), shelf: "1", count: 3 })
   const { orderId } = await assignment4.orderBooks([book._id.toString(), book._id.toString()])
 
+  await assignment4.fulfilOrder(orderId, [{ book: book._id.toString(), shelf: "1", numberOfBooks:2 }])
   await assignment4.fulfilOrder(orderId, [{ book: book._id.toString(), shelf: '1', numberOfBooks: 2 }])
   const shelf = await ShelfModel.findOne({ bookId: book._id.toString(), shelf: 1 })
   expect(shelf?.count).toBe(1)
