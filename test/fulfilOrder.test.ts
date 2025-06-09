@@ -22,7 +22,7 @@ it('fulfills an order by updating shelf stock', async () => {
   })
 
   // Add 3 books to shelf
-  await ShelfModel.create({ bookId: book._id.toString(), shelf: "1", count: 3 })
+  await ShelfModel.create({ bookId: book._id.toString(), shelf: "1", count: 4 })
 
   // Create an order for 2 books
   const { orderId } = await assignment4.orderBooks([
