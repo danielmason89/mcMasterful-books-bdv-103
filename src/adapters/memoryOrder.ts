@@ -1,51 +1,52 @@
-import { OrderPort } from '../ports/order';
-import { v4 as uuid } from 'uuid';
+import { OrderPort } from '../ports/order'
+import { v4 as uuid } from 'uuid'
+import { WarehousePort } from '../ports/warehouse'
+import { BookID } from '../../adapter/assignment-4'
 
-const orders: Array<{ id: string; books: Record<string, number>; fulfilled: boolean }> = [];
+let orderData: Record<string, Record<BookID, number>> = {}
 
-export const memoryOrder: OrderPort = {
-  async createOrder(order) {
-    const orderMap: Record<string, number> = {};
-    order.forEach((id) => {
-      orderMap[id] = (orderMap[id] ?? 0) + 1;
-    });
-    const id = uuid();
-    orders.push({ id, books: orderMap, fulfilled: false });
-    return { orderId: id };
-  },
-
-  placeOrder(bookIds) {
-    const orderMap: Record<string, number> = {};
-    bookIds.forEach((id) => {
-      orderMap[id] = (orderMap[id] ?? 0) + 1;
-    });
-    const id = uuid();
-    orders.push({ id, books: orderMap, fulfilled: false });
-    return id;
-  },
-
-  getNextUnfulfilledOrder() {
-    const next = orders.find((o) => !o.fulfilled);
-    if (!next) throw new Error('No unfulfilled orders');
-    return { orderId: next.id, books: next.books };
-  },
-
-  markOrderFulfilled(orderId) {
-    const order = orders.find((o) => o.id === orderId);
-    if (!order) throw new Error('Order not found');
-    order.fulfilled = true;
-  },
-
-  async fulfilOrder(orderId) {
-    const order = orders.find((o) => o.id === orderId);
-    if (!order) throw new Error('Order not found');
-    order.fulfilled = true;
+export const memoryOrder: OrderPort & { reset(): void } = {
+  async createOrder(bookIds) {
+    const orderId = uuid()
+    orderData[orderId] = {}
+    for (const id of bookIds) {
+      orderData[orderId][id] = (orderData[orderId][id] ?? 0) + 1
+    }
+    return { orderId }
   },
 
   async listOrders() {
-    return orders.map((o) => ({
-      orderId: o.id,
-      books: o.books,
-    }));
+    return Object.entries(orderData).map(([orderId, books]) => ({
+      orderId,
+      books,
+    }))
   },
-};
+
+  async fulfilOrder(orderId, fulfilled, warehouse: WarehousePort) {
+    for (const { book, shelf, numberOfBooks } of fulfilled) {
+      warehouse.removeBooksFromShelf(book, shelf, numberOfBooks)
+    }
+    return
+  },
+
+  // Stub implementation for placeOrder
+  async placeOrder(bookIds: BookID[]) {
+    return this.createOrder(bookIds)
+  },
+
+  getNextUnfulfilledOrder() {
+    const orderIds = Object.keys(orderData)
+    if (orderIds.length === 0) throw new Error('No unfulfilled orders')
+    const orderId = orderIds[0]
+    return { orderId, books: orderData[orderId] }
+  },
+
+  async markOrderFulfilled(orderId: string) {
+    delete orderData[orderId]
+    return
+  },
+
+  reset() {
+    orderData = {}
+  }
+}

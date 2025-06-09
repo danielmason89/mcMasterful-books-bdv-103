@@ -3,7 +3,7 @@ import { WarehousePort } from './warehouse'
 
 export interface OrderPort {
   createOrder(order: BookID[]): Promise<{ orderId: OrderId }>
-  placeOrder(bookIds: string[]): string
+  placeOrder(bookIds: string[]): Promise<{ orderId: string }>
   getNextUnfulfilledOrder(): { orderId: string, books: Record<string, number> }
   markOrderFulfilled(orderId: string): void
   listOrders(): Promise<Array<{ orderId: OrderId, books: Record<BookID, number> }>>
