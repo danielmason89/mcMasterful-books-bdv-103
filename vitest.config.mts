@@ -7,6 +7,7 @@ export default defineConfig({
     includeSource: ['src/**/*.{ts,js}'],
     watch: false,
     include: ['**/*.test.ts'],
+    setupFiles: ['test/setup.ts'],
     testTimeout: 10000,
     hookTimeout: 60000, 
   }

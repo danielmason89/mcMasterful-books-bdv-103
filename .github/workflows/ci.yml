@@ -69,6 +69,17 @@ jobs:
     needs: [lint, format, type-check]
     runs-on: ubuntu-latest
 
+    services:
+      mongo:
+        image: mongo
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd="mongosh --eval 'db.adminCommand(\"ping\")'"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -83,3 +94,5 @@ jobs:
 
       - name: Run tests
         run: npm run test:ci
+        env:
+          MONGO_URI: mongodb://localhost:27017/booksdb
