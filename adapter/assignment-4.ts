@@ -22,10 +22,8 @@ export interface Filter {
   author?: string
 }
 
-// If multiple filters are provided, any book that matches at least one of them should be returned
-// Within a single filter, a book would need to match all the given conditions
 async function listBooks(filters?: Filter[]): Promise<Book[]> {
-  const books = await BookModel.find().lean()
+  const books = await BookModel.find().lean<{ _id: string } & Book>()
   const shelves = await ShelfModel.find().lean()
 
   const stockMap: Record<string, number> = {}
@@ -35,15 +33,15 @@ async function listBooks(filters?: Filter[]): Promise<Book[]> {
     stockMap[bookId] = (stockMap[bookId] || 0) + count
   }
 
-  let enrichedBooks: Book[] = books.map(book => ({
-    id: book._id.toString(),
+  let enrichedBooks: Book[] = Array.isArray(books) ? books.map((book: { _id: string } & Book) => ({
+    id: book._id,
     name: book.name,
     author: book.author,
     description: book.description,
     price: book.price,
     image: book.image,
-    stock: stockMap[book._id.toString()] || 0
-  }))
+    stock: stockMap[book._id] || 0
+  })) : []
 
   if (filters && filters.length > 0) {
     enrichedBooks = enrichedBooks.filter(book =>
