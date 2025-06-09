@@ -35,7 +35,6 @@ it('creates an order and returns orderId', async () => {
 
   // 🔁 Wait for write to fully persist
   const placed = await ShelfModel.findOne({ bookId: new mongoose.Types.ObjectId(bookIdStr), shelf: 'A1' })
-  expect(placed).not.toBeNull()
   expect(placed?.count).toBe(2)
 
   const { orderId } = await assignment4.orderBooks({
