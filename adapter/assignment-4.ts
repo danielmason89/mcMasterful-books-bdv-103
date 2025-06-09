@@ -66,14 +66,21 @@ async function placeBooksOnShelf(bookId: BookID, numberOfBooks: number, shelf: S
   await warehouse.placeBooksOnShelf(bookId, shelf, numberOfBooks)
 }
 
-async function orderBooks(bookIds: BookID[]): Promise<{ orderId: OrderId }> {
-  for (const id of bookIds) {
-    const book = await BookModel.findById(id).lean()
+async function orderBooks(bookQuantities: Record<BookID, number>): Promise<{ orderId: OrderId }> {
+  for (const bookId in bookQuantities) {
+    const book = await BookModel.findById(bookId).lean();
     if (!book) {
-      throw new Error(`Invalid book ID: ${id}`)
+      throw new Error(`Invalid book ID: ${bookId}`);
     }
   }
-  return await order.createOrder(bookIds)
+
+  const bookIds: string[] = [];
+  for (const [bookId, quantity] of Object.entries(bookQuantities)) {
+    for (let i = 0; i < quantity; i++) {
+      bookIds.push(bookId);
+    }
+  }
+  return await order.createOrder(bookIds);
 }
 
 async function findBookOnShelf(bookId: BookID): Promise<Array<{ shelf: ShelfId, count: number }>> {

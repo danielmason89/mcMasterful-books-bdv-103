@@ -11,8 +11,6 @@ beforeAll(async () => {
   await connectToDatabase()
 }, 60000)
 
-
-
 beforeEach(async () => {
   await BookModel.deleteMany({})
   await OrderModel.deleteMany({})
@@ -28,10 +26,9 @@ it('creates an order and returns orderId', async () => {
     price: 10
   })
 
-  const { orderId } = await assignment4.orderBooks([
-    book._id.toString(),
-    book._id.toString()
-  ])
+  const { orderId } = await assignment4.orderBooks({
+    [book._id.toString()]: 2
+  })
 
   const order = await OrderModel.findOne({ orderId })
 

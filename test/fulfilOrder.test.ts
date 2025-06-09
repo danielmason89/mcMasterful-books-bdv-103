@@ -32,10 +32,9 @@ it('fulfills an order by updating shelf stock', async () => {
   await ShelfModel.create({ bookId: book._id.toString(), shelf: "1", count: 2 })
 
   // Create an order for 2 books
-  const { orderId } = await assignment4.orderBooks([
-    book._id.toString(),
-    book._id.toString()
-  ])
+  const { orderId } = await assignment4.orderBooks({
+    [book._id.toString()]: 2
+  })
 
   // Fulfill order by removing 2 books
   await assignment4.fulfilOrder(orderId, [
