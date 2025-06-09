@@ -35,5 +35,5 @@ it('creates an order and returns orderId', async () => {
 
   const order = await OrderModel.findOne({ orderId })
 
-  expect(order?.books.get(book._id.toString())).toBe(2)
+  expect(order?.books[book._id.toString()]).toBe(2)
 })
