@@ -1,9 +1,10 @@
 import assignment4 from '../adapter/assignment-4.js'
 
-import { it, expect } from 'vitest'
+import { it, beforeEach, expect } from 'vitest'
 
-import BookModel from '../src/models/book.js'
 import ShelfModel from '../src/models/shelf.js'
+import OrderModel from '../src/models/order.js'
+import BookModel from '../src/models/book.js'
 
 import { beforeAll } from 'vitest'
 import { connectToDatabase } from '../src/lib/db.js'
@@ -11,6 +12,12 @@ import { connectToDatabase } from '../src/lib/db.js'
 beforeAll(async () => {
   await connectToDatabase()
 }, 60000)
+
+beforeEach(async () => {
+  await BookModel.deleteMany({})
+  await OrderModel.deleteMany({})
+  await ShelfModel.deleteMany({})
+})
 
 it('fulfills an order by updating shelf stock', async () => {
   const book = await BookModel.create({
