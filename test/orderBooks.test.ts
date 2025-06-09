@@ -7,6 +7,7 @@ import ShelfModel from '../src/models/shelf.js'
 import { mongoWarehouse } from '../src/adapters/mongoWarehouse.js'
 
 import { connectToDatabase } from '../src/lib/db.js'
+import mongoose from 'mongoose'
 
 beforeAll(async () => {
   await connectToDatabase()
@@ -19,7 +20,6 @@ beforeEach(async () => {
 })
 
 it('creates an order and returns orderId', async () => {
-  // Create a book
   const book = await BookModel.create({
     name: 'Order Test',
     author: 'O',
@@ -28,16 +28,21 @@ it('creates an order and returns orderId', async () => {
     price: 10
   })
 
-  // Add stock for the book using the mongoWarehouse adapter
-  await mongoWarehouse.placeBooksOnShelf(book._id.toString(), 'A1', 2)
+  const bookIdStr = book._id.toString()
 
-  // Create an order for 2 units of the book
+  // 🔍 DOUBLE CHECK bookId match in WarehouseModel
+  await mongoWarehouse.placeBooksOnShelf(bookIdStr, 'A1', 2)
+
+  // 🔁 Wait for write to fully persist
+  const placed = await ShelfModel.findOne({ bookId: new mongoose.Types.ObjectId(bookIdStr), shelf: 'A1' })
+  expect(placed).not.toBeNull()
+  expect(placed?.count).toBe(2)
+
   const { orderId } = await assignment4.orderBooks({
-    [book._id.toString()]: 2
+    [bookIdStr]: 2
   })
 
-  // Retrieve the order and check if the order has the correct quantity
   const order = await OrderModel.findOne({ orderId })
 
-  expect(order?.books[book._id.toString()]).toBe(2)
+  expect(order?.books[bookIdStr]).toBe(2)
 })
