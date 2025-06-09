@@ -171,4 +171,9 @@ router.delete('/books/:id', async (ctx) => {
     ctx.body = { error: (err as Error).message };
   }
 });
+
+router.get('/health', (ctx) => {
+  ctx.body = 'OK';
+});
+
 export default router;

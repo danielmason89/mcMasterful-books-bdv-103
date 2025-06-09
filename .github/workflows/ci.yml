@@ -10,59 +10,35 @@ jobs:
   lint:
     name: Run ESLint
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: 20
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run ESLint
-        run: npm run lint
+      - run: npm ci
+      - run: npm run lint
 
   format:
     name: Check Prettier Formatting
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: 20
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run Prettier check
-        run: npm run format -- --check
+      - run: npm ci
+      - run: npm run format -- --check
 
   type-check:
     name: Run TypeScript Type Check
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: 20
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run Type Check
-        run: npm run type-check
+      - run: npm ci
+      - run: npm run type-check
 
   test:
     name: Run Tests
@@ -81,16 +57,23 @@ jobs:
           --health-retries=5
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: 20
+      - run: npm ci
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Start API server
+        run: npm run start &
+        env:
+          MONGO_URI: mongodb://localhost:27017/booksdb
+
+      - name: Wait for server to be ready
+        run: |
+          for i in {1..10}; do
+            curl --silent http://localhost:3000/health && break
+            sleep 2
+          done
 
       - name: Run tests
         run: npm run test:ci
