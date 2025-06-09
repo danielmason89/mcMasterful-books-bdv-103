@@ -1,6 +1,6 @@
 import { OrderPort } from '../ports/order'
 import { v4 as uuid } from 'uuid'
-import { WarehousePort } from '../ports/warehouse'
+import WarehousePort from '../ports/warehouse'
 import { BookID } from '../../adapter/assignment-4'
 
 let orderData: Record<string, Record<BookID, number>> = {}
@@ -34,9 +34,9 @@ export const memoryOrder: OrderPort & { reset(): void } = {
     return this.createOrder(bookIds)
   },
 
-  getNextUnfulfilledOrder() {
+  async getNextUnfulfilledOrder() {
     const orderIds = Object.keys(orderData)
-    if (orderIds.length === 0) throw new Error('No unfulfilled orders')
+    if (orderIds.length === 0) return null
     const orderId = orderIds[0]
     return { orderId, books: orderData[orderId] }
   },

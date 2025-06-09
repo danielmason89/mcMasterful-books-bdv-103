@@ -1,4 +1,4 @@
-import { WarehousePort } from '../ports/warehouse'
+import WarehousePort from '../ports/warehouse'
 
 let shelfData: Record<string, Record<string, number>> = {}
 
@@ -9,14 +9,18 @@ export const memoryWarehouse: WarehousePort & { reset(): void } = {
   },
 
   getBooksOnShelf(bookId) {
-    return Object.entries(shelfData[bookId] ?? {}).map(([shelf, count]) => ({
-      shelf,
-      count,
-    }))
+    return Promise.resolve(
+      Object.entries(shelfData[bookId] ?? {}).map(([shelf, count]) => ({
+        shelf,
+        count,
+      }))
+    )
   },
 
   getTotalStock(bookId) {
-    return Object.values(shelfData[bookId] ?? {}).reduce((sum, c) => sum + c, 0)
+    return Promise.resolve(
+      Object.values(shelfData[bookId] ?? {}).reduce((sum, c) => sum + c, 0)
+    )
   },
 
   removeBooksFromShelf(bookId, shelf, count) {
@@ -27,10 +31,12 @@ export const memoryWarehouse: WarehousePort & { reset(): void } = {
   },
 
   findBookOnShelf(bookId) {
-    return Object.entries(shelfData[bookId] ?? {}).map(([shelf, count]) => ({
-      shelf,
-      count,
-    }))
+    return Promise.resolve(
+      Object.entries(shelfData[bookId] ?? {}).map(([shelf, count]) => ({
+        shelf,
+        count,
+      }))
+    )
   },
 
   reset() {

@@ -1,7 +1,7 @@
 import previous_assignment from './assignment-3.js'
 import BookModel from '../src/models/book.js'
-import { memoryWarehouse } from '../src/adapters/memoryWarehouse.js'
-import { memoryOrder } from '../src/adapters/memoryOrder.js'
+import { warehouse } from '../src/adapters/warehoues.js'
+import { order } from '../src/adapters/order.js'
 
 // Types
 export type BookID = string
@@ -31,7 +31,7 @@ async function listBooks(filters?: Filter[]): Promise<Book[]> {
 
   return await Promise.all(
     books.map(async (book) => {
-      const stock = await memoryWarehouse.getTotalStock(book.id!)
+      const stock = await warehouse.getTotalStock(book.id!)
       return { ...book, stock }
     })
   )
@@ -50,7 +50,7 @@ async function lookupBookById(bookId: BookID): Promise<Book> {
   if (!book) {
     throw new Error('Book not found')
   }
-  const stock = await memoryWarehouse.getTotalStock(bookId)
+  const stock = await warehouse.getTotalStock(bookId)
   return { ...book, stock }
 }
 
@@ -63,29 +63,29 @@ async function removeBook(book: BookID): Promise<void> {
 }
 
 async function placeBooksOnShelf(bookId: BookID, numberOfBooks: number, shelf: ShelfId): Promise<void> {
-  await memoryWarehouse.placeBooksOnShelf(bookId, shelf, numberOfBooks)
+  await warehouse.placeBooksOnShelf(bookId, shelf, numberOfBooks)
 }
 
-async function orderBooks(order: BookID[]): Promise<{ orderId: OrderId }> {
-  for (const id of order) {
+async function orderBooks(bookIds: BookID[]): Promise<{ orderId: OrderId }> {
+  for (const id of bookIds) {
     const book = await BookModel.findById(id).lean()
     if (!book) {
       throw new Error(`Invalid book ID: ${id}`)
     }
   }
-  return await memoryOrder.createOrder(order)
+  return await order.createOrder(bookIds)
 }
 
 async function findBookOnShelf(bookId: BookID): Promise<Array<{ shelf: ShelfId, count: number }>> {
-  return await memoryWarehouse.findBookOnShelf(bookId)
+  return await warehouse.findBookOnShelf(bookId)
 }
 
 async function fulfilOrder(orderId: OrderId, booksFulfilled: Array<{ book: BookID, shelf: ShelfId, numberOfBooks: number }>): Promise<void> {
-  return await memoryOrder.fulfilOrder(orderId, booksFulfilled, memoryWarehouse)
+  return await order.fulfilOrder(orderId, booksFulfilled, warehouse)
 }
 
 async function listOrders(): Promise<Array<{ orderId: OrderId, books: Record<BookID, number> }>> {
-  return await memoryOrder.listOrders()
+  return await order.listOrders()
 }
 
 const assignment = 'assignment-4'
