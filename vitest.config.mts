@@ -8,6 +8,6 @@ export default defineConfig({
     watch: false,
     include: ['**/*.test.ts'],
     testTimeout: 10000,
-    hookTimeout: 15000, 
+    hookTimeout: 60000, 
   }
 });

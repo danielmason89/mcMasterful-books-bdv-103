@@ -10,7 +10,7 @@ import { connectToDatabase } from '../src/lib/db.js'
 
 beforeAll(async () => {
   await connectToDatabase()
-})
+}, 60000)
 
 it('lists all orders with book quantities', async () => {
 

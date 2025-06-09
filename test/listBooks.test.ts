@@ -10,7 +10,7 @@ import { connectToDatabase } from '../src/lib/db.js'
 
 beforeAll(async () => {
   await connectToDatabase()
-})
+}, 60000)
 
 describe('assignment-4: listBooks', () => {
   let bookId1: string

@@ -10,7 +10,7 @@ import { connectToDatabase } from '../src/lib/db.js'
 
 beforeAll(async () => {
   await connectToDatabase()
-})
+}, 60000)
 
 it('finds all shelves and counts for a book', async () => {
   const book = await BookModel.create({ name: 'Shelf Lookup', author: 'S', description: '', image: '', price: 10 })
