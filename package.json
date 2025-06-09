@@ -9,7 +9,7 @@
         "fix-lint": "eslint ./src --ext .ts --fix",
         "format": "prettier --write \"src/**/*.ts\"",
         "type-check": "tsc --noEmit",
-        "test": "vitest",
+        "test": "USE_DB=true vitest",
         "test:watch": "vitest --watch",
         "test:ci": "vitest run"
     },

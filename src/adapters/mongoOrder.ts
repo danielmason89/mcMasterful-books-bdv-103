@@ -1,68 +1,50 @@
-import { OrderPort } from '../ports/order'
-import mongoose from 'mongoose'
-import WarehousePort from '../ports/warehouse'
+import OrderModel from '../models/order.js'
+import { v4 as uuidv4 } from 'uuid'
 
-const orderSchema = new mongoose.Schema({
-  orderId: String,
-  books: mongoose.Schema.Types.Mixed,
-  fulfilled: { type: Boolean, default: false }
-})
+export const mongoOrder = {
+  async createOrder(bookIds: string[]) {
+    const orderId = uuidv4()
+    const booksMap = new Map<string, number>()
 
-const OrderModel = mongoose.model('Order', orderSchema, 'orders')
-
-export const mongoOrder: OrderPort = {
-  async createOrder(bookIds) {
-    const orderId = new mongoose.Types.ObjectId().toString()
-    const orderMap: Record<string, number> = {}
-    for (const id of bookIds) {
-      orderMap[id] = (orderMap[id] ?? 0) + 1
+    for (const bookId of bookIds) {
+      const count = booksMap.get(bookId) || 0
+      booksMap.set(bookId, count + 1)
     }
-    await OrderModel.create({ orderId, books: orderMap, fulfilled: false })
-    return { orderId }
+
+    const order = await OrderModel.create({
+      orderId,
+      books: booksMap
+    })
+
+    return { orderId: order.orderId }
   },
 
   async listOrders() {
-    const orders = await OrderModel.find()
-    return orders.map((o) => ({
-      orderId: typeof o.orderId === 'string' ? o.orderId : String(o.orderId ?? ''),
-      books: (o.books ?? {}) as Record<string, number>
+    const orders = await OrderModel.find().lean()
+    return orders.map((order) => ({
+      orderId: order.orderId,
+      books: Object.fromEntries(order.books)
     }))
   },
 
-  async fulfilOrder(orderId, fulfilled, warehouse: WarehousePort) {
-    for (const { book, shelf, numberOfBooks } of fulfilled) {
+  async fulfilOrder(
+    orderId: string,
+    tasks: Array<{ book: string, shelf: string, numberOfBooks: number }>,
+    warehouse: { removeBooksFromShelf: (book: string, shelf: string, numberOfBooks: number) => Promise<void> }
+  ) {
+    const order = await OrderModel.findOne({ orderId })
+    if (!order) throw new Error('Order not found')
+
+    for (const task of tasks) {
+      const { book, shelf, numberOfBooks } = task
+
+      // ✅ This is the key line
       await warehouse.removeBooksFromShelf(book, shelf, numberOfBooks)
-    }
-    const order = await OrderModel.findOne({ orderId })
-    if (order) {
-      order.fulfilled = true
-      await order.save()
-    } else {
-      throw new Error('Order not found')
-    }
-  },
 
-  // Added missing methods to satisfy OrderPort interface
-  async placeOrder(bookIds: string[]) {
-    return this.createOrder(bookIds)
-  },
-
-  async getNextUnfulfilledOrder() {
-    const order = await OrderModel.findOne({ fulfilled: false })
-    if (!order) return null
-    return {
-      orderId: typeof order.orderId === 'string' ? order.orderId : String(order.orderId ?? ''),
-      books: (order.books ?? {}) as Record<string, number>
+      const prev = order.books.get(book) || 0
+      order.books.set(book, prev - numberOfBooks)
     }
-  },
 
-  async markOrderFulfilled(orderId: string) {
-    const order = await OrderModel.findOne({ orderId })
-    if (order) {
-      order.fulfilled = true
-      await order.save()
-    } else {
-      throw new Error('Order not found')
-    }
+    await order.save()
   }
 }

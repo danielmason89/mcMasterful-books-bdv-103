@@ -24,10 +24,16 @@ export const memoryWarehouse: WarehousePort & { reset(): void } = {
   },
 
   removeBooksFromShelf(bookId, shelf, count) {
-    const current = shelfData[bookId]?.[shelf] ?? 0
-    if (current < count) throw new Error('Not enough stock')
-    shelfData[bookId][shelf] -= count
-    if (shelfData[bookId][shelf] === 0) delete shelfData[bookId][shelf]
+    return new Promise<void>((resolve, reject) => {
+      const current = shelfData[bookId]?.[shelf] ?? 0
+      if (current < count) {
+        reject(new Error('Not enough stock'))
+        return
+      }
+      shelfData[bookId][shelf] -= count
+      if (shelfData[bookId][shelf] === 0) delete shelfData[bookId][shelf]
+      resolve()
+    })
   },
 
   findBookOnShelf(bookId) {
