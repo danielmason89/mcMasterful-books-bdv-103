@@ -1,12 +1,18 @@
 import assignment4 from '../adapter/assignment-4.js'
-
-import { describe, it, beforeEach, expect } from 'vitest'
+import { describe, it, beforeEach, expect, beforeAll } from 'vitest'
 
 import BookModel from '../src/models/book.js'
-import ShelfModel from '../src/models/shelf.js'
-
-import { beforeAll } from 'vitest'
 import { connectToDatabase } from '../src/lib/db.js'
+
+import mongoose from 'mongoose'
+
+// Reuse existing Warehouse model
+const warehouseSchema = new mongoose.Schema({
+  bookId: String,
+  shelf: String,
+  count: Number
+})
+const WarehouseModel = mongoose.models.WarehouseBook || mongoose.model('WarehouseBook', warehouseSchema, 'warehouse')
 
 beforeAll(async () => {
   await connectToDatabase()
@@ -19,9 +25,8 @@ describe('assignment-4: listBooks', () => {
   beforeEach(async () => {
     // Clean test DB
     await BookModel.deleteMany({})
-    await ShelfModel.deleteMany({})
+    await WarehouseModel.deleteMany({})
 
-    // Create books
     const book1 = await BookModel.create({
       name: 'Stock Book A',
       author: 'Test Author',
@@ -41,8 +46,7 @@ describe('assignment-4: listBooks', () => {
     bookId1 = book1._id.toString()
     bookId2 = book2._id.toString()
 
-    // Add books to shelves
-    await ShelfModel.insertMany([
+    await WarehouseModel.insertMany([
       { bookId: bookId1, shelf: "1", count: 3 },
       { bookId: bookId1, shelf: "2", count: 2 },
       { bookId: bookId2, shelf: "3", count: 5 }

@@ -12,10 +12,10 @@ describe('Warehouse & Order Integration', () => {
     memoryWarehouse.reset()
     memoryOrder.reset()
   })
-  
-  it('should add books to shelf and report total stock', () => {
-    memoryWarehouse.placeBooksOnShelf(testBookId, testShelfId, 10)
-    const stock = memoryWarehouse.getTotalStock(testBookId)
+
+  it('should add books to shelf and report total stock', async () => {
+    await memoryWarehouse.placeBooksOnShelf(testBookId, testShelfId, 10)
+    const stock = await memoryWarehouse.getTotalStock(testBookId)
     expect(stock).toBe(10)
   })
 
@@ -27,8 +27,8 @@ describe('Warehouse & Order Integration', () => {
   })
 
   it('should fulfil an order and decrease stock accordingly', async () => {
-    // Add 5 books to shelf first
-    memoryWarehouse.placeBooksOnShelf(testBookId, testShelfId, 5)
+    // Add 10 books to shelf first
+    await memoryWarehouse.placeBooksOnShelf(testBookId, testShelfId, 10)
 
     // Create an order for 2 books
     const { orderId } = await memoryOrder.createOrder([testBookId, testBookId])
@@ -39,6 +39,6 @@ describe('Warehouse & Order Integration', () => {
     ], memoryWarehouse)
 
     const stock = await memoryWarehouse.getTotalStock(testBookId)
-    expect(stock).toBe(10)
+    expect(stock).toBe(8) // 10 - 2 = 8
   })
 })
