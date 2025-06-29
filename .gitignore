@@ -131,3 +131,5 @@ dist
 
 # tsoa generated files
 src/generated/
+
+client/
