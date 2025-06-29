@@ -4,13 +4,15 @@
   "_version": "20.1.0",
 
   "compilerOptions": {
-    "lib": ["es2023"],
+    "lib": ["ES6"],
     "module": "node16",
-    "target": "es2022",
+    "target": "es6",
     "strict": true,
     "types": ["vitest", "node"],
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node16",
     "inlineSourceMap": true,

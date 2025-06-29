@@ -1,0 +1,14 @@
+{
+  "entryFile": "src/server.ts",
+  "noImplicitAdditionalProperties": "throw-on-extras",
+  "controllerPathGlobs": ["src/routes/*.route.ts"],
+  "spec": {
+    "outputDirectory": "src/generated",
+    "specVersion": 3
+  },
+  "routes": {
+    "middleware": "koa",
+    "basePath": "/",
+    "routesDir": "src/generated"
+  }
+}

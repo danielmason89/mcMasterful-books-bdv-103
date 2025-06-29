@@ -1,8 +1,8 @@
-# 📚 Assignment 4: Supporting the Warehouse — Bookstore API
+# 📚 Assignment 5: Supporting the Warehouse — Bookstore API
 
-This is the fourth assignment for **BDV 103: Advanced JavaScript through Node.js** at McMaster University Continuing Education. The objective was to add tests to our CI pipeline and use them to help us build and design an API for the McMasterful Books warehouse.
+This is the fifth assignment for **BDV 103: Advanced JavaScript through Node.js** at McMaster University Continuing Education. The objective was to add tests to our CI pipeline and use them to help us build and design an API for the McMasterful Books warehouse.
 
-Assignment 4 focused on extending an existing bookstore API by introducing warehouse and order management features, building on test-driven development (TDD), and integrating CI/CD practices.
+Assignment 5 focused on extending an existing bookstore API by introducing warehouse and order management features, building on test-driven development (TDD), and integrating CI/CD practices.
 
 ## ✅ Features Implemented
 

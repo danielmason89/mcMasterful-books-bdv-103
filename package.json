@@ -1,5 +1,5 @@
 {
-    "name": "assignment-4",
+    "name": "assignment-5",
     "version": "1.0.0",
     "description": "This is a template repository for the fourth assignment in BVD 103 at McMaster Continuing Education.",
     "main": "index.js",
@@ -18,13 +18,16 @@
     "license": "ISC",
     "dependencies": {
         "@koa/cors": "^5.0.0",
+        "@koa/router": "^13.1.0",
         "@types/mongoose": "^5.11.96",
         "koa": "^2.15.3",
         "koa-bodyparser": "^4.4.1",
         "koa-qs": "^3.0.0",
         "koa-router": "^13.0.1",
         "koa-zod-router": "^2.3.0",
+        "koa2-swagger-ui": "^5.11.0",
         "mongoose": "^8.15.0",
+        "tsoa": "^6.6.0",
         "typesync": "^0.14.3",
         "uuid": "^11.1.0",
         "zod": "^3.24.4"
