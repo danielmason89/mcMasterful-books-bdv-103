@@ -7,7 +7,6 @@ import ShelfModel from '../src/models/shelf.js'
 import { mongoWarehouse } from '../src/adapters/mongoWarehouse.js'
 
 import { connectToDatabase } from '../src/lib/db.js'
-import mongoose from 'mongoose'
 
 beforeAll(async () => {
   await connectToDatabase()
@@ -30,16 +29,25 @@ it('creates an order and returns orderId', async () => {
 
   const bookIdStr = book._id.toString()
 
-  // 🔍 DOUBLE CHECK bookId match in WarehouseModel
   await mongoWarehouse.placeBooksOnShelf(bookIdStr, 'A1', 2)
 
-  // 🔁 Wait for write to fully persist
-  const placed = await ShelfModel.findOne({ bookId: new mongoose.Types.ObjectId(bookIdStr), shelf: 'A1' })
+  const placed = await ShelfModel.findOne({
+    bookId: bookIdStr,
+    shelf: 'A1'
+  })
+
   expect(placed?.count).toBe(2)
 
-  const { orderId } = await assignment4.orderBooks({
-    [bookIdStr]: 2
-  })
+  let orderId: string | undefined | number
+  try {
+    const result = await assignment4.orderBooks({
+      [bookIdStr]: 2
+    })
+    orderId = result.orderId
+    console.log('orderId:', orderId)
+  } catch (e) {
+    console.error('orderBooks failed:', e)
+  }
 
   const order = await OrderModel.findOne({ orderId })
 

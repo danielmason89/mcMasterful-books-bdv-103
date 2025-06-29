@@ -6,6 +6,7 @@ const shelfSchema = new mongoose.Schema({
   count: { type: Number, required: true }
 });
 
-const ShelfModel = mongoose.models.Shelf || mongoose.model('Shelf', shelfSchema);
+const ShelfModel =
+  mongoose.models.Shelf || mongoose.model('Shelf', shelfSchema);
 
 export default ShelfModel;

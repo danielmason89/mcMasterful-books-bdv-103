@@ -1,51 +1,51 @@
-import WarehousePort from '../ports/warehouse'
+import WarehousePort from '../ports/warehouse';
 
-let shelfData: Record<string, Record<string, number>> = {}
+let shelfData: Record<string, Record<string, number>> = {};
 
 export const memoryWarehouse: WarehousePort & { reset(): void } = {
   placeBooksOnShelf(bookId, shelf, count) {
-    shelfData[bookId] ??= {}
-    shelfData[bookId][shelf] = (shelfData[bookId][shelf] ?? 0) + count
+    shelfData[bookId] ??= {};
+    shelfData[bookId][shelf] = (shelfData[bookId][shelf] ?? 0) + count;
   },
 
   getBooksOnShelf(bookId) {
     return Promise.resolve(
       Object.entries(shelfData[bookId] ?? {}).map(([shelf, count]) => ({
         shelf,
-        count,
+        count
       }))
-    )
+    );
   },
 
   getTotalStock(bookId) {
     return Promise.resolve(
       Object.values(shelfData[bookId] ?? {}).reduce((sum, c) => sum + c, 0)
-    )
+    );
   },
 
   removeBooksFromShelf(bookId, shelf, count) {
     return new Promise<void>((resolve, reject) => {
-      const current = shelfData[bookId]?.[shelf] ?? 0
+      const current = shelfData[bookId]?.[shelf] ?? 0;
       if (current < count) {
-        reject(new Error('Not enough stock'))
-        return
+        reject(new Error('Not enough stock'));
+        return;
       }
-      shelfData[bookId][shelf] -= count
-      if (shelfData[bookId][shelf] === 0) delete shelfData[bookId][shelf]
-      resolve()
-    })
+      shelfData[bookId][shelf] -= count;
+      if (shelfData[bookId][shelf] === 0) delete shelfData[bookId][shelf];
+      resolve();
+    });
   },
 
   findBookOnShelf(bookId) {
     return Promise.resolve(
       Object.entries(shelfData[bookId] ?? {}).map(([shelf, count]) => ({
         shelf,
-        count,
+        count
       }))
-    )
+    );
   },
 
   reset() {
-    shelfData = {}
+    shelfData = {};
   }
-}
+};

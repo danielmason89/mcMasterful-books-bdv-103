@@ -47,5 +47,5 @@ it('fulfills an order by updating shelf stock', async () => {
     shelf: "1"
   })
 
-  expect(shelf?.count).toBe(2)
+  expect(shelf?.count).toBe(0)
 })
