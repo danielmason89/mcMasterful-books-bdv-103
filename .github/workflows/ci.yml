@@ -40,11 +40,40 @@ jobs:
       - run: npm ci
       - run: npm run type-check
 
-  test:
-    name: Run Tests
+  unit-test:
+    name: Run Unit/Standard Tests
     needs: [lint, format, type-check]
     runs-on: ubuntu-latest
+    services:
+      mongo:
+        image: mongo
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd="mongosh --eval 'db.adminCommand(\"ping\")'"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - run: npm ci
+
+      - name: Generate OpenAPI Spec and Client SDK
+        run: ./generate-openapi.sh
+
+      - name: Run standard tests
+        run: npx vitest --no-threads --excludeTag api
+        env:
+          MONGO_URI: mongodb://localhost:27017/booksdb
+
+  api-test:
+    name: Run API Tests
+    needs: [unit-test]
+    runs-on: ubuntu-latest
     services:
       mongo:
         image: mongo
@@ -78,11 +107,11 @@ jobs:
             sleep 2
           done
 
-      - name: Run tests
-        run: npm run test:ci
+      - name: Run API tests
+        run: npx vitest --tag api
         env:
           MONGO_URI: mongodb://localhost:27017/booksdb
-      
+
       - name: Upload Client SDK
         uses: actions/upload-artifact@v3
         with:

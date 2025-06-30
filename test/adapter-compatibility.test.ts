@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { describe, it, expect, beforeEach } from 'vitest'
 import { memoryWarehouse } from '../src/adapters/memoryWarehouse'
 import { mongoWarehouse } from '../src/adapters/mongoWarehouse'
@@ -5,7 +6,7 @@ import { connectToDatabase } from '../src/lib/db'
 import ShelfModel from '../src/models/shelf'
 
 describe('Warehouse Adapter Compatibility', () => {
-  const bookId = 'book-abc'
+  const bookId = new mongoose.Types.ObjectId().toString();
 
   beforeEach(async () => {
     await connectToDatabase()

@@ -16,9 +16,9 @@ export async function startServer(port = 0, useRandomDb = false): Promise<{
   const dbName = useRandomDb ? Math.floor(Math.random() * 100000).toString() : undefined;
 
   const orders = getOrderDatabase(dbName);
-  const warehouse = getWarehouseDatabase(dbName);
+  const _warehouse = getWarehouseDatabase(dbName);
 
-  const app = createApp({ orders, warehouse });
+  const app = createApp({ orders, _warehouse });
 
   return new Promise((resolve) => {
     const server = app.listen(port, () => {

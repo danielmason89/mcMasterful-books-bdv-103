@@ -84,7 +84,18 @@ async function orderBooks(bookQuantities: Record<BookID, number>): Promise<{ ord
 }
 
 async function findBookOnShelf(bookId: BookID): Promise<Array<{ shelf: ShelfId, count: number }>> {
-  return await warehouse.findBookOnShelf(bookId)
+  const shelves = ['1', '2', '3'];
+  const results = await Promise.all(
+    shelves.map(async (shelf) => {
+      const res = await warehouse.findBookOnShelf(bookId, shelf);
+      if (res && !Array.isArray(res)) {
+        return { shelf, count: res.count };
+      }
+      return null;
+    })
+  );
+
+  return results.filter(Boolean) as Array<{ shelf: ShelfId; count: number }>;
 }
 
 async function fulfilOrder(orderId: OrderId, booksFulfilled: Array<{ book: BookID, shelf: ShelfId, numberOfBooks: number }>): Promise<void> {

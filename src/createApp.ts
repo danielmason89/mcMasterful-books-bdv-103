@@ -10,6 +10,8 @@ import zodRouter from './routes.js';
 import { RegisterRoutes } from './generated/routes.js';
 
 import type { OrderAdapter, WarehouseAdapter } from './types/adapters';
+import path from 'path';
+import fs from 'fs';
 
 export function createApp(state: {
   orders: OrderAdapter;
@@ -21,7 +23,6 @@ export function createApp(state: {
   app.use(cors());
   app.use(bodyParser());
 
-  // 👇 inject orders + warehouse into ctx.state
   app.use(async (ctx, next) => {
     ctx.state.orders = state.orders;
     ctx.state.warehouse = state.warehouse;
@@ -29,6 +30,12 @@ export function createApp(state: {
   });
 
   const mainRouter = new Router();
+
+  const swaggerPath = path.resolve(__dirname, './generated/swagger.json');
+  mainRouter.get('/docs/spec/swagger.json', async (ctx) => {
+    ctx.set('Content-Type', 'application/json');
+    ctx.body = fs.readFileSync(swaggerPath, 'utf-8');
+  });
 
   RegisterRoutes(mainRouter);
 

@@ -27,8 +27,8 @@ it('finds all shelves and counts for a book', async () => {
   })
 
   await WarehouseModel.insertMany([
-    { bookId: book._id.toString(), shelf: "1", count: 1 },
-    { bookId: book._id.toString(), shelf: "2", count: 2 }
+    { bookId: book._id, shelf: "1", count: 1 },
+    { bookId: book._id, shelf: "2", count: 2 }
   ])
 
   const result = await assignment4.findBookOnShelf(book._id.toString())
