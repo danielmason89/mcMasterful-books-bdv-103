@@ -4,6 +4,8 @@ This is the fifth assignment for **BDV 103: Advanced JavaScript through Node.js*
 
 Assignment 5 focused on extending an existing bookstore API by introducing warehouse and order management features, building on test-driven development (TDD), and integrating CI/CD practices.
 
+---
+
 ## ✅ Features Implemented
 
 - **Advanced Filtering API** for listing books by:
@@ -11,7 +13,14 @@ Assignment 5 focused on extending an existing bookstore API by introducing wareh
   - Partial match on book name or author
 - **Robust Input Validation** using [Zod](https://github.com/colinhacks/zod)
 - **MongoDB Integration** with [Mongoose](https://mongoosejs.com/)
-- **Modular Routing** using [Koa](https://koajs.com/)
+- **Warehouse Management APIs** using [tsoa](https://tsoa-community.github.io/docs/)
+  - Fulfilling orders
+  - Querying shelf stock
+- **Order Management APIs**
+  - Create new orders
+  - List existing orders
+- **OpenAPI Spec** generation using `tsoa`
+- **Client SDK generation** using [OpenAPI Generator](https://openapi-generator.tech/)
 - **Static Code Analysis**:
   - Linting with ESLint
   - Formatting with Prettier
@@ -30,13 +39,13 @@ Assignment 5 focused on extending an existing bookstore API by introducing wareh
 
 ### Install Dependencies
 
-```
+```bash
 npm install
 ```
 
 ### Start the Server
 
-```
+```bash
 npm run start-server
 ```
 
@@ -45,74 +54,57 @@ The server will be available at:
 
 ### Start the Client
 
-```
-mcmasterful-books
+```bash
+npm run start-client
 ```
 
 The client will be available at:  
 `http://localhost:9080`
 
+---
 
 ## 🧪 API Endpoints
 
-### `GET /`
+All warehouse and order routes follow RESTful principles and are documented in the Swagger UI.
 
-Health check.
+### Swagger UI
 
----
+Visit [http://localhost:3000/docs](http://localhost:3000/docs) for full documentation.
 
-### `GET /books?filters=[]`
+### Warehouse API
 
-Returns books matching one or more filter criteria. Example:
+- `GET /warehouse/{book}`  
+  Retrieve all shelves where the book is located, with the count per shelf.
 
-```
-GET /books?filters=[{"from":10,"to":30},{"author":"tolkien"}]
-```
+### Fulfillment API
 
-#### Filter Fields
+- `POST /fulfilment?orderId=...`  
+  Fulfill an order by passing a list of `{ book, shelf, numberOfBooks }`.
 
-- `from`: minimum price  
-- `to`: maximum price  
-- `name`: substring match (case-insensitive)  
-- `author`: substring match (case-insensitive)
+### Orders API
 
----
+- `POST /orders`  
+  Create a new order by sending a list of book IDs.
 
-### `POST /books`
-
-Create a new book.
-
-#### Example Body
-
-```
-{
-  "name": "Dune",
-  "author": "Frank Herbert",
-  "description": "Sci-fi epic",
-  "price": 19.99,
-  "image": "https://example.com/dune.jpg"
-}
-```
+- `GET /orders`  
+  Retrieve a list of all orders.
 
 ---
 
-### `PUT /books`
+## 🔧 OpenAPI Generation
 
-Update an existing book by ID.
+To regenerate OpenAPI spec and client SDK:
 
-```
-{
-  "id": "664f9b4...",
-  "name": "Updated Name",
-  "price": 14.99
-}
+```bash
+npm run generate-api
 ```
 
----
+This runs:
 
-### `DELETE /books/:id`
-
-Delete a book by its ID.
+```bash
+npx tsoa spec-and-routes
+npx @openapitools/openapi-generator-cli generate -i ./src/generated/swagger.json -o ./client -g typescript-fetch --additional-properties=supportsES6=true,namingConvention=camelCase,apiNameSuffix=Api
+```
 
 ---
 
@@ -120,25 +112,25 @@ Delete a book by its ID.
 
 ### Run Linter
 
-```
+```bash
 npm run lint
 ```
 
 ### Auto-fix Linter Issues
 
-```
+```bash
 npm run fix-lint
 ```
 
 ### Run Prettier Formatting
 
-```
+```bash
 npm run format
 ```
 
 ### Type Check with TypeScript
 
-```
+```bash
 npm run type-check
 ```
 
@@ -157,6 +149,7 @@ It runs on every push and pull request and performs:
 - ESLint
 - Prettier formatting check
 - TypeScript type check
+- Tests via Vitest
 
 ---
 
@@ -164,9 +157,13 @@ It runs on every push and pull request and performs:
 
 ```
 ├── adapter/assignment-4.ts       # Book filtering and adapter logic
+├── client/                       # Generated OpenAPI client SDK
+├── controllers/                 # tsoa-based route controllers
 ├── src/
 │   ├── lib/db.ts                 # MongoDB connection
 │   ├── models/book.ts           # Book schema
+│   ├── data/                    # Order/Warehouse database logic
+│   ├── types/                   # Shared types
 │   ├── routes.ts                # All API endpoints
 │   └── server.ts                # Entry point for Koa server
 ├── .github/workflows/ci.yml     # CI setup
