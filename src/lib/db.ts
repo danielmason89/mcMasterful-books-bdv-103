@@ -1,7 +1,3 @@
-/**
- * Establishes a connection to the MongoDB database using Mongoose.
- * Ensures that only one connection is made during application runtime.
- */
 import mongoose from 'mongoose';
 
 const MONGO_URI = 'mongodb://mongo:27017/booksdb';

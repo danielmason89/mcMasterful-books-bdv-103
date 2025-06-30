@@ -1,23 +1,27 @@
-import assignment4 from '../adapter/assignment-4.js'
+import { it, beforeEach, expect, beforeAll, afterAll } from 'vitest';
+import mongoose from 'mongoose';
 
-import { it, beforeEach, expect } from 'vitest'
-
-import ShelfModel from '../src/models/shelf.js'
-import OrderModel from '../src/models/order.js'
-import BookModel from '../src/models/book.js'
-
-import { beforeAll } from 'vitest'
-import { connectToDatabase } from '../src/lib/db.js'
+import ShelfModel from '../src/models/shelf.js';
+import OrderModel from '../src/models/order.js';
+import BookModel from '../src/models/book.js';
+import { connectToDatabase } from '../src/lib/db.js';
+import { mongoOrder } from '../src/adapters/mongoOrder.js';
+import { mongoWarehouse } from '../src/adapters/mongoWarehouse.js';
 
 beforeAll(async () => {
-  await connectToDatabase()
-}, 60000)
+  await connectToDatabase();
+}, 60000);
 
 beforeEach(async () => {
-  await BookModel.deleteMany({})
-  await OrderModel.deleteMany({})
-  await ShelfModel.deleteMany({})
-})
+  await mongoose.connection.collection('warehouse').deleteMany({});
+  await BookModel.deleteMany({});
+  await OrderModel.deleteMany({});
+  await ShelfModel.deleteMany({});
+});
+
+afterAll(async () => {
+  await mongoose.connection.close();
+});
 
 it('fulfills an order by updating shelf stock', async () => {
   const book = await BookModel.create({
@@ -26,26 +30,20 @@ it('fulfills an order by updating shelf stock', async () => {
     description: '',
     image: '',
     price: 10
-  })
+  });
 
-  // Add 3 books to shelf
-  await ShelfModel.create({ bookId: book._id.toString(), shelf: "1", count: 2 })
+  const bookId = book._id.toString();
+  const shelf = '1';
 
-  // Create an order for 2 books
-  const { orderId } = await assignment4.orderBooks({
-    [book._id.toString()]: 2
-  })
+  await mongoWarehouse.placeBooksOnShelf(bookId, shelf, 3);
 
-  // Fulfill order by removing 2 books
-  await assignment4.fulfilOrder(orderId, [
-    { book: book._id.toString(), shelf: "1", numberOfBooks: 2 }
-  ])
+  const { orderId } = await mongoOrder.createOrder([bookId, bookId]);
 
-  // Check the shelf now has 1 book left
-  const shelf = await ShelfModel.findOne({
-    bookId: book._id.toString(),
-    shelf: "1"
-  })
+  await mongoOrder.fulfilOrder(orderId, [
+    { book: bookId, shelf, numberOfBooks: 2 }
+  ], mongoWarehouse);
 
-  expect(shelf?.count).toBe(0)
-})
+  const updated = await mongoose.connection.collection('warehouse').findOne({ bookId, shelf });
+
+  expect(updated?.count).toBe(1);
+});

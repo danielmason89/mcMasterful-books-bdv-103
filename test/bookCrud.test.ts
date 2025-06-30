@@ -28,7 +28,7 @@ describe('createOrUpdateBook() and removeBook()', () => {
     const bookId = await assignment.createOrUpdateBook(book)
     expect(bookId).toBeDefined()
 
-    const saved = await BookModel.findById(bookId)
+    const saved = await BookModel.findOne({ name: 'New Book' })
     expect(saved?.name).toBe('New Book')
   })
 

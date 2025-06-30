@@ -1,10 +1,14 @@
 #!/bin/bash
 
-# Generate OpenAPI spec and routes
+# Exit on error
+set -e
+
+# Step 1: Generate tsoa spec and routes
 npx tsoa spec-and-routes
 
-# Generate the client SDK from that spec
+# Step 2: Regenerate OpenAPI client SDK
 npx @openapitools/openapi-generator-cli generate \
   -i ./src/generated/swagger.json \
   -o ./client \
-  -g typescript-fetch
+  -g typescript-fetch \
+  --additional-properties=supportsES6=true,namingConvention=camelCase,apiNameSuffix=Api

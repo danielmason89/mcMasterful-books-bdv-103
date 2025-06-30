@@ -24,7 +24,7 @@ export const memoryOrder: OrderPort & { reset(): void } = {
 
   async fulfilOrder(orderId, fulfilled, warehouse: WarehousePort) {
     for (const { book, shelf, numberOfBooks } of fulfilled) {
-      warehouse.removeBooksFromShelf(book, shelf, numberOfBooks);
+      await warehouse.removeBooksFromShelf(book, shelf, numberOfBooks);
     }
     return;
   },

@@ -1,7 +1,7 @@
 {
   "entryFile": "src/server.ts",
   "noImplicitAdditionalProperties": "throw-on-extras",
-  "controllerPathGlobs": ["src/routes/*.route.ts"],
+  "controllerPathGlobs": ["src/routes/*.route.ts", "src/controllers/**/*Controller.ts"],
   "spec": {
     "outputDirectory": "src/generated",
     "specVersion": 3

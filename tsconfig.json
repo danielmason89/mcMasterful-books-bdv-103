@@ -8,7 +8,7 @@
     "module": "node16",
     "target": "es6",
     "strict": true,
-    "types": ["vitest", "node"],
+    "types": ["vitest", "node", "./src/types/koa"],
     "esModuleInterop": true,
     "skipLibCheck": true,
     "experimentalDecorators": true,

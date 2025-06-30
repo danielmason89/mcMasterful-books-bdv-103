@@ -2,7 +2,8 @@ import mongoose from 'mongoose';
 
 const orderSchema = new mongoose.Schema({
   orderId: { type: String, required: true, unique: true },
-  books: { type: Map, of: Number, required: true }
+  books: { type: Map, of: Number, required: true },
+  default: () => new Map<string, number>()
 });
 
 // Prevent model overwrite error in watch mode
