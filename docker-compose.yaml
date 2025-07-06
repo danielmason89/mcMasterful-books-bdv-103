@@ -9,6 +9,8 @@ services:
     depends_on:
       - front-end
       - server
+      - server2
+      - server3
 
   mongo:
     image: mongo
@@ -21,6 +23,24 @@ services:
       - ./adapter:/source/adapter
 
   server:
+    image: node:20
+    volumes:
+      - ./:/app
+    working_dir: /app
+    command: npx -y tsx src/server.ts
+    depends_on:
+      - mongo
+
+  server2:
+    image: node:20
+    volumes:
+      - ./:/app
+    working_dir: /app
+    command: npx -y tsx src/server.ts
+    depends_on:
+      - mongo
+
+  server3:
     image: node:20
     volumes:
       - ./:/app

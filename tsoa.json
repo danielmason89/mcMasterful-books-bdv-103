@@ -9,7 +9,7 @@
   },
   "routes": {
     "middleware": "koa",
-    "basePath": "/",
+    "basePath": "/api",
     "routesDir": "src/generated"
   }
 }
