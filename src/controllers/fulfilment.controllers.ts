@@ -1,8 +1,13 @@
-import {
-  Route, Controller, Post, Query, Body, Request
-} from 'tsoa';
-import type { ParameterizedContext, DefaultContext, Request as KoaRequest } from 'koa';
-import type { AppOrderDatabaseState, AppWarehouseDatabaseState } from '../state/index';
+import { Route, Controller, Post, Query, Body, Request } from 'tsoa';
+import type {
+  ParameterizedContext,
+  DefaultContext,
+  Request as KoaRequest
+} from 'koa';
+import type {
+  AppOrderDatabaseState,
+  AppWarehouseDatabaseState
+} from '../state/index';
 
 interface FulfilmentRequest {
   book: string;
@@ -21,15 +26,19 @@ export class FulfilmentController extends Controller {
    * @param booksFulfilled Array of books to fulfill
    */
   @Post()
-public async fulfilOrder(
-  @Query() orderId: string,
-  @Body() booksFulfilled: FulfilmentRequest[],
-  @Request() request: KoaRequest
-): Promise<void> {
-  const ctx = request.ctx as unknown as ParameterizedContext<
-    AppOrderDatabaseState & AppWarehouseDatabaseState,
-    DefaultContext
-  >;
-  await ctx.state.order.fulfilOrder(orderId, booksFulfilled, ctx.state.warehouse);
-}
+  public async fulfilOrder(
+    @Query() orderId: string,
+    @Body() booksFulfilled: FulfilmentRequest[],
+    @Request() request: KoaRequest
+  ): Promise<void> {
+    const ctx = request.ctx as unknown as ParameterizedContext<
+      AppOrderDatabaseState & AppWarehouseDatabaseState,
+      DefaultContext
+    >;
+    await ctx.state.order.fulfilOrder(
+      orderId,
+      booksFulfilled,
+      ctx.state.warehouse
+    );
+  }
 }

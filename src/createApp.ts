@@ -51,8 +51,8 @@ export function createApp(state: {
       specPrefix: '/docs/spec',
       exposeSpec: true,
       swaggerOptions: {
-        spec: swaggerDocument,
-      },
+        spec: swaggerDocument
+      }
     })
   );
 

@@ -1,6 +1,7 @@
 import { it, expect } from 'vitest';
 import { setupTestServer, TestContext } from './helpers';
-import { OrdersApi, Configuration } from '../client';
+import { Configuration } from '../client';
+import { OrdersApi } from '../client/apis/OrdersApi';
 
 
 const ctx = {} as TestContext;

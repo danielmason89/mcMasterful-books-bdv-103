@@ -1,6 +1,4 @@
-import {
-  Route, Controller, Post, Get, Body, Request
-} from 'tsoa';
+import { Route, Controller, Post, Get, Body, Request } from 'tsoa';
 import type { Request as KoaRequest } from 'koa';
 
 /**

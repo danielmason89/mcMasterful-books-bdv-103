@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { OrdersApi, Configuration } from "../client";
+import { Configuration } from '../client';
+import { OrdersApi } from '../client/apis/OrdersApi';
 
 
 describe('API: Order Routes', () => {

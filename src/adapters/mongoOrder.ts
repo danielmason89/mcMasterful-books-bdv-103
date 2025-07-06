@@ -47,11 +47,17 @@ export function createMongoOrder(db: Connection) {
       const orders = await OrderModel.find().lean();
       return orders.map((order) => ({
         orderId: order.orderId,
-        books: Object.fromEntries(order.books instanceof Map ? order.books : new Map())
+        books: Object.fromEntries(
+          order.books instanceof Map ? order.books : new Map()
+        )
       }));
     },
 
-    async fulfilOrder(orderId: string, tasks: Array<{ book: string; shelf: string; numberOfBooks: number }>, warehouse: WarehouseAdapter) {
+    async fulfilOrder(
+      orderId: string,
+      tasks: Array<{ book: string; shelf: string; numberOfBooks: number }>,
+      warehouse: WarehouseAdapter
+    ) {
       const order = await OrderModel.findOne({ orderId });
       if (!order) throw new Error('Order not found');
 

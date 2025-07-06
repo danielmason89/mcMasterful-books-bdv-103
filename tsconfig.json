@@ -4,9 +4,9 @@
   "_version": "20.1.0",
 
   "compilerOptions": {
-    "lib": ["ES6"],
+    "lib": ["ES2020", "DOM"],
     "module": "node16",
-    "target": "es6",
+    "target": "ES2020",
     "strict": true,
     "types": ["vitest", "node", "./src/types/koa"],
     "esModuleInterop": true,
