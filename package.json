@@ -1,7 +1,7 @@
 {
-    "name": "assignment-5",
+    "name": "assignment-6",
     "version": "1.0.0",
-    "description": "This is a template repository for the fourth assignment in BVD 103 at McMaster Continuing Education.",
+    "description": "This is a template repository for the sixth assignment in BVD 103 at McMaster Continuing Education.",
     "main": "index.js",
     "scripts": {
         "start": "./generate-openapi.sh && tsx src/server.ts",
