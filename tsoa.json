@@ -4,7 +4,8 @@
   "controllerPathGlobs": ["src/routes/*.route.ts", "src/controllers/**/*.ts"],
   "spec": {
     "outputDirectory": "src/generated",
-    "specVersion": 3
+    "specVersion": 3,
+    "basePath": "/api"
   },
   "routes": {
     "middleware": "koa",
