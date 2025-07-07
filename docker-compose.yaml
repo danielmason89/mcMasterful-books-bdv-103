@@ -28,6 +28,8 @@ services:
       - ./:/app
     working_dir: /app
     command: npx -y tsx src/server.ts
+    ports:
+      - "3000:3000"
     depends_on:
       - mongo
 
@@ -37,6 +39,8 @@ services:
       - ./:/app
     working_dir: /app
     command: npx -y tsx src/server.ts
+    ports:
+      - "3000:3000"
     depends_on:
       - mongo
 
@@ -46,5 +50,7 @@ services:
       - ./:/app
     working_dir: /app
     command: npx -y tsx src/server.ts
+    ports:
+      - "3000:3000"
     depends_on:
       - mongo

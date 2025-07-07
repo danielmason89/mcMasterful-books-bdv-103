@@ -12,7 +12,7 @@
         "type-check": "./generate-openapi.sh && tsc --noEmit",
         "test": "./generate-openapi.sh && USE_DB=true vitest",
         "test:watch": "./generate-openapi.sh && vitest --watch",
-        "test:ci": "./generate-openapi.sh && vitest run"
+        "test:ci": "./generate-openapi.sh && wait-on http://localhost:3000 && vitest run"
     },
     "keywords": [],
     "author": "",
@@ -56,6 +56,7 @@
         "typescript": "^5.8.3",
         "typescript-eslint": "^8.32.1",
         "vite": "^6.3.5",
-        "vitest": "^3.2.2"
+        "vitest": "^3.2.2",
+        "wait-on": "^8.0.3"
     }
 }
