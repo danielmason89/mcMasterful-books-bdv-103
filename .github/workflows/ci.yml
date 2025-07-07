@@ -74,7 +74,7 @@ jobs:
         run: ./generate-openapi.sh
 
       - name: Run standard tests
-        run: npx vitest --no-threads --excludeTag api
+        run: npx vitest --excludeTag api
         env:
           MONGO_URI: mongodb://localhost:27017/booksdb
 
