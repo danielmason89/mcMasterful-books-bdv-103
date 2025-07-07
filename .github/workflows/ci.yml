@@ -27,6 +27,10 @@ jobs:
         with:
           node-version: 20
       - run: npm ci
+
+      - name: Set execute permissions for generate-openapi.sh
+        run: chmod +x ./generate-openapi.sh
+
       - run: npm run format -- --check
 
   type-check:
