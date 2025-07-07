@@ -1,14 +1,14 @@
 import { it, expect } from 'vitest';
 import { setupTestServer, TestContext } from './helpers';
 import { Configuration } from '../client';
-import { OrdersApi } from '../client/apis/OrdersApi';
+import { DefaultApi } from '../client/apis/DefaultApi';
 
 
 const ctx = {} as TestContext;
 setupTestServer(ctx);
 
 it('should create and list orders successfully', async () => {
-  const client = new OrdersApi(new Configuration({ basePath: ctx.address }));
+  const client = new DefaultApi(new Configuration({ basePath: ctx.address }));
 
   // Create order
   const orderRes = await client.createOrder({
