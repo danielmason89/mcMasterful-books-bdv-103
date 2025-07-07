@@ -38,6 +38,8 @@ jobs:
         with:
           node-version: 20
       - run: npm ci
+      - name: Set execute permissions for generate-openapi.sh
+        run: chmod +x ./generate-openapi.sh
       - run: npm run type-check
 
   unit-test:
@@ -61,7 +63,8 @@ jobs:
         with:
           node-version: 20
       - run: npm ci
-
+      - name: Set execute permissions for generate-openapi.sh
+        run: chmod +x ./generate-openapi.sh
       - name: Generate OpenAPI Spec and Client SDK
         run: ./generate-openapi.sh
 
@@ -91,6 +94,9 @@ jobs:
         with:
           node-version: 20
       - run: npm ci
+
+      - name: Set execute permissions for generate-openapi.sh
+        run: chmod +x ./generate-openapi.sh
 
       - name: Generate OpenAPI Spec and Client SDK
         run: ./generate-openapi.sh
