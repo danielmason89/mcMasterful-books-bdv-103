@@ -1,6 +1,6 @@
 # 📚 Assignment 6: Horizontal Scaling — Bookstore API
 
-This is the sixth assignment for **BDV 103: Advanced JavaScript through Node.js** at McMaster University Continuing Education. The objective was to add tests to our CI pipeline and use them to help us build and design an API for the McMasterful Books warehouse.
+This is the sixth assignment for **BDV 103: Advanced JavaScript through Node.js** at McMaster University Continuing Education. The focus of this assignment was on **horizontal scaling** and **test-driven API development**, including integrating CI pipelines and generating an OpenAPI-compliant client SDK.
 
 Assignment 6 focused on extending an existing bookstore API by introducing warehouse and order management features, building on test-driven development (TDD), and integrating CI/CD practices.
 
@@ -8,24 +8,25 @@ Assignment 6 focused on extending an existing bookstore API by introducing wareh
 
 ## ✅ Features Implemented
 
-- **Advanced Filtering API** for listing books by:
-  - Price range (`from`, `to`)
-  - Partial match on book name or author
-- **Robust Input Validation** using [Zod](https://github.com/colinhacks/zod)
-- **MongoDB Integration** with [Mongoose](https://mongoosejs.com/)
-- **Warehouse Management APIs** using [tsoa](https://tsoa-community.github.io/docs/)
-  - Fulfilling orders
-  - Querying shelf stock
-- **Order Management APIs**
-  - Create new orders
-  - List existing orders
-- **OpenAPI Spec** generation using `tsoa`
-- **Client SDK generation** using [OpenAPI Generator](https://openapi-generator.tech/)
-- **Static Code Analysis**:
-  - Linting with ESLint
-  - Formatting with Prettier
-  - Type checking with TypeScript
-- **Continuous Integration (CI)** with GitHub Actions
+ 📦 **Warehouse Management API**
+  - Fulfills orders and manages shelf inventory
+  - Built with [tsoa](https://tsoa-community.github.io/docs/)
+- 🛒 **Order Management API**
+  - Create and retrieve orders using RESTful endpoints
+- 📑 **OpenAPI Specification**
+  - Generated via `tsoa`, output to `swagger.json`
+- 🔁 **TypeScript Client SDK**
+  - Automatically generated using [OpenAPI Generator](https://openapi-generator.tech/) (`typescript-fetch`)
+- 🧪 **Test Coverage with Vitest**
+  - Covers unit tests and API-level tests using real and mock MongoDB setups
+- 🔍 **Input Validation**
+  - Enforced using [Zod](https://github.com/colinhacks/zod`)
+- 🔧 **MongoDB Integration**
+  - All persistent data is stored using [Mongoose](https://mongoosejs.com/)
+- 🛠️ **Static Code Quality**
+  - ESLint, Prettier, and `tsc --noEmit` used for code validation
+- 🚦 **CI/CD Workflow**
+  - GitHub Actions pipeline for linting, formatting, type-checking, and running tests
 
 ---
 
