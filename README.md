@@ -1,8 +1,8 @@
-# 📚 Assignment 6: Horizontal Scaling — Bookstore API
+# 📚 Assignment 7: Horizontal Scaling — Bookstore API
 
-This is the sixth assignment for **BDV 103: Advanced JavaScript through Node.js** at McMaster University Continuing Education. The focus of this assignment was on **horizontal scaling** and **test-driven API development**, including integrating CI pipelines and generating an OpenAPI-compliant client SDK.
+This is the seventh assignment for **BDV 103: Advanced JavaScript through Node.js** at McMaster University Continuing Education. The focus of this assignment was on **horizontal scaling** and **test-driven API development**, including integrating CI pipelines and generating an OpenAPI-compliant client SDK.
 
-Assignment 6 focused on extending an existing bookstore API by introducing warehouse and order management features, building on test-driven development (TDD), and integrating CI/CD practices.
+Assignment 7 focused on extending an existing bookstore API by introducing warehouse and order management features, building on test-driven development (TDD), and integrating CI/CD practices.
 
 ---
 
