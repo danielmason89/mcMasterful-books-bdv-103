@@ -1,13 +1,13 @@
 import http from 'http';
 import { AddressInfo } from 'net';
 import { createApp } from './createApp.js';
-import { connectToDatabase } from '../../shared/lib/db.js';
+import { connectToDatabase } from '';
 
 import { getOrderDatabase } from '../../orders-service/src/data/getOrderDatabase.js';
 import { getWarehouseDatabase } from '../../warehouse-service/src/data/getWarehouseDatabase.js';
 
 import { connectToMessageBus } from './lib/message-bus';
-import { connectToRabbitMQ } from '../../shared/lib/messaging.js';
+import { connectToRabbitMQ } from '../src/lib/message-bus.js';
 
 export async function startServer(
   port = 0,

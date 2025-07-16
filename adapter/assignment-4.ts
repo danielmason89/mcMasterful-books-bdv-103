@@ -1,7 +1,8 @@
-import previous_assignment from './assignment-3.js'
-import BookModel from '../src/models/book.js'
-import { warehouse } from '../src/adapters/warehouse.js'
-import { order } from '../src/adapters/order.js'
+import previous_assignment from './assignment-4.js'
+import { BookModel } from '../listings-service/src/models/book.js'
+import { warehouse } from '../warehouse-service/src/adapters/warehouse.js'
+import { order } from '../orders-service/src/adapter/order.js'
+import { publishBookAdded, publishBookStocked } from '../shared/messaging/publisher.js'
 
 // Types
 export type BookID = string
@@ -38,64 +39,52 @@ async function listBooks(filters?: Filter[]): Promise<Book[]> {
 }
 
 async function lookupBookById(bookId: BookID): Promise<Book> {
-  const book = await BookModel.findById(bookId).lean<{
-    _id: string
-    name: string
-    author: string
-    description: string
-    price: number
-    image: string
-  }>()
-
-  if (!book) {
-    throw new Error('Book not found')
-  }
+  const book = await BookModel.findById(bookId).lean()
+  if (!book) throw new Error('Book not found')
   const stock = await warehouse.getTotalStock(bookId)
   return { ...book, stock }
 }
 
 async function createOrUpdateBook(book: Book): Promise<BookID> {
-  return await previous_assignment.createOrUpdateBook(book)
+  const id = await previous_assignment.createOrUpdateBook(book)
+  const newBook = await BookModel.findById(id).lean()
+  if (newBook) await publishBookAdded(newBook)
+  return id
 }
 
-async function removeBook(book: BookID): Promise<void> {
-  await previous_assignment.removeBook(book)
+async function removeBook(bookId: BookID): Promise<void> {
+  await previous_assignment.removeBook(bookId)
 }
 
-async function placeBooksOnShelf(bookId: BookID, numberOfBooks: number, shelf: ShelfId): Promise<void> {
-  await warehouse.placeBooksOnShelf(bookId, shelf, numberOfBooks)
+async function placeBooksOnShelf(bookId: BookID, numberOfBooks: number): Promise<void> {
+  const book = await BookModel.findById(bookId).lean<{ name: string }>()
+  if (!book) throw new Error(`Book not found: ${bookId}`)
+  await warehouse.placeBooksOnShelf(bookId, book.name, numberOfBooks)
+  await publishBookStocked(bookId, numberOfBooks)
 }
 
 async function orderBooks(bookQuantities: Record<BookID, number>): Promise<{ orderId: OrderId }> {
   for (const bookId in bookQuantities) {
-    const book = await BookModel.findById(bookId).lean();
-    if (!book) {
-      throw new Error(`Invalid book ID: ${bookId}`);
-    }
+    const book = await BookModel.findById(bookId).lean()
+    if (!book) throw new Error(`Invalid book ID: ${bookId}`)
   }
-
-  const bookIds: string[] = [];
+  const bookIds: string[] = []
   for (const [bookId, quantity] of Object.entries(bookQuantities)) {
-    for (let i = 0; i < quantity; i++) {
-      bookIds.push(bookId);
-    }
+    for (let i = 0; i < quantity; i++) bookIds.push(bookId)
   }
-  return await order.createOrder(bookIds);
+  return await order.createOrder(bookIds)
 }
 
 async function findBookOnShelf(bookId: BookID): Promise<Array<{ shelf: ShelfId, count: number }>> {
-  const shelves = ['1', '2', '3'];
+  const shelves = ['1', '2', '3']
   const results = await Promise.all(
     shelves.map(async (shelf) => {
-      const res = await warehouse.findBookOnShelf(bookId, shelf);
-      if (res && !Array.isArray(res)) {
-        return { shelf, count: res.count };
-      }
-      return null;
+      const res = await warehouse.findBookOnShelf(bookId, shelf)
+      if (res && !Array.isArray(res)) return { shelf, count: res.count }
+      return null
     })
-  );
-
-  return results.filter(Boolean) as Array<{ shelf: ShelfId; count: number }>;
+  )
+  return results.filter(Boolean) as Array<{ shelf: ShelfId, count: number }>
 }
 
 async function fulfilOrder(orderId: OrderId, booksFulfilled: Array<{ book: BookID, shelf: ShelfId, numberOfBooks: number }>): Promise<void> {
@@ -106,7 +95,7 @@ async function listOrders(): Promise<Array<{ orderId: OrderId, books: Record<Boo
   return await order.listOrders()
 }
 
-const assignment = 'assignment-4'
+const assignment = 'assignment-7'
 
 export default {
   assignment,
