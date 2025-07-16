@@ -1,21 +1,27 @@
-import { Request, Response } from 'express';
-import { ShelfModel } from '../models/ShelfModel';
+import { Router } from 'express';
+import { warehouseAdapter } from '../adapters/warehouseAdapter';
 
-export async function placeBooksOnShelf(req: Request, res: Response) {
-  const { bookId } = req.params;
-  const { shelf, count } = req.body;
+export const router = Router();
 
-  const result = await ShelfModel.updateOne(
-    { bookId, shelf },
-    { $inc: { count } },
-    { upsert: true }
-  );
+router.post('/stock', async (req, res) => {
+  const { bookId, shelf, count } = req.body;
+  await warehouseAdapter.placeBooksOnShelf(bookId, shelf, count);
+  res.status(200).send();
+});
 
-  res.status(200).json({ success: true, result });
-}
+router.get('/stock/:bookId', async (req, res) => {
+  const stock = await warehouseAdapter.getTotalStock(req.params.bookId);
+  res.json({ stock });
+});
 
-export async function findBookOnShelf(req: Request, res: Response) {
-  const { bookId } = req.params;
-  const shelves = await ShelfModel.find({ bookId });
-  res.status(200).json({ shelves });
-}
+
+// warehouse-service/src/models/shelfModel.ts
+import mongoose from 'mongoose';
+
+const shelfSchema = new mongoose.Schema({
+  bookId: String,
+  shelf: String,
+  count: Number
+});
+
+export const ShelfModel = mongoose.model('Shelf', shelfSchema);
