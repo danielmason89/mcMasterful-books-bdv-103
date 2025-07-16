@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Node 20",
+  "_version": "20.1.0",
+
+  "compilerOptions": {
+    "lib": ["ES2020", "DOM"],
+    "module": "node16",
+    "target": "ES2020",
+    "strict": true,
+    "types": ["vitest", "node", "./src/types/koa"],
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node16",
+    "inlineSourceMap": true,
+    "resolveJsonModule": true,
+  },
+  "include": ["src", "test"]
+}
