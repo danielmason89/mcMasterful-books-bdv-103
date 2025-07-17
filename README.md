@@ -1,110 +1,101 @@
 # 📚 Assignment 7: Horizontal Scaling — Bookstore API
 
-This is the seventh assignment for **BDV 103: Advanced JavaScript through Node.js** at McMaster University Continuing Education. The focus of this assignment was on **horizontal scaling** and **test-driven API development**, including integrating CI pipelines and generating an OpenAPI-compliant client SDK.
+This is the seventh assignment for **BDV 103: Advanced JavaScript through Node.js** at McMaster University Continuing Education. The focus of this assignment was on **horizontal scaling**, **event-driven microservices**, and **test-driven API development**, including integrating CI pipelines and generating an OpenAPI-compliant client SDK.
 
-Assignment 7 focused on extending an existing bookstore API by introducing warehouse and order management features, building on test-driven development (TDD), and integrating CI/CD practices.
+Assignment 7 builds on prior work by introducing three decoupled services — `warehouse`, `orders`, and `listings` — coordinated through RabbitMQ messaging and supporting independent MongoDB instances.
 
 ---
 
 ## ✅ Features Implemented
 
- 📦 **Warehouse Management API**
-  - Fulfills orders and manages shelf inventory
+- 📦 **Warehouse Management API**
+  - Manages shelf inventory and fulfills orders
+  - Emits `BookStocked` events via RabbitMQ
   - Built with [tsoa](https://tsoa-community.github.io/docs/)
+
 - 🛒 **Order Management API**
-  - Create and retrieve orders using RESTful endpoints
+  - Create and retrieve orders via RESTful endpoints
+  - Listens for `BookAdded` and `BookStocked` events to validate book inventory
+
+- 🧾 **Listings API**
+  - Handles the creation and publication of new books
+  - Emits `BookAdded` events
+
 - 📑 **OpenAPI Specification**
-  - Generated via `tsoa`, output to `swagger.json`
+  - Generated via `tsoa` in each service
+  - Accessible at `/docs` endpoints
+
 - 🔁 **TypeScript Client SDK**
-  - Automatically generated using [OpenAPI Generator](https://openapi-generator.tech/) (`typescript-fetch`)
+  - Auto-generated using [OpenAPI Generator](https://openapi-generator.tech/) with the `typescript-fetch` template
+
 - 🧪 **Test Coverage with Vitest**
-  - Covers unit tests and API-level tests using real and mock MongoDB setups
+  - Includes both unit and integration tests
+
 - 🔍 **Input Validation**
-  - Enforced using [Zod](https://github.com/colinhacks/zod`)
-- 🔧 **MongoDB Integration**
-  - All persistent data is stored using [Mongoose](https://mongoosejs.com/)
-- 🛠️ **Static Code Quality**
-  - ESLint, Prettier, and `tsc --noEmit` used for code validation
+  - Enforced using [Zod](https://github.com/colinhacks/zod)
+
+- 🧵 **RabbitMQ Messaging Layer**
+  - Used for event-driven communication between services (e.g., `BookAdded`, `BookStocked`)
+
+- 🛢️ **MongoDB Integration**
+  - Each service uses its own isolated MongoDB collection with Mongoose
+
+- 🛠️ **Code Quality Tools**
+  - ESLint, Prettier, and `tsc --noEmit` for static validation
+
 - 🚦 **CI/CD Workflow**
-  - GitHub Actions pipeline for linting, formatting, type-checking, and running tests
+  - GitHub Actions pipelines for linting, formatting, type-checking, and tests
 
 ---
 
-## 🚀 Getting Started
+## 🐳 Running the Project with Docker Compose
 
 ### Prerequisites
+- Docker
+- Node.js (only needed for local testing or SDK generation)
 
-- Node.js v18+ or v20+
-- Docker (if using MongoDB in a container)
-- MongoDB running on `mongodb://mongo:27017/booksdb`
-
-### Install Dependencies
-
+### Start Services
 ```bash
-npm install
+docker compose up --build
 ```
 
-### Start the Server
-
-```bash
-npm run start-server
-```
-
-The server will be available at:  
-`http://localhost:3000`
-
-### Start the Client
-
-```bash
-npm run start-client
-```
-
-The client will be available at:  
-`http://localhost:9080`
+The following services will be available:
+- Frontend: [http://localhost:9080](http://localhost:9080)
+- Warehouse API: [http://localhost:3002/docs](http://localhost:3002/docs)
+- Orders API: [http://localhost:3001/docs](http://localhost:3001/docs)
+- Listings API: [http://localhost:3003/docs](http://localhost:3003/docs)
+- RabbitMQ Management UI: [http://localhost:15672](http://localhost:15672)
 
 ---
 
 ## 🧪 API Endpoints
 
-All warehouse and order routes follow RESTful principles and are documented in the Swagger UI.
+All routes follow RESTful conventions and are documented in Swagger UI for each service.
 
-### Swagger UI
-
-Visit [http://localhost:3000/docs](http://localhost:3000/docs) for full documentation.
+### Listings API
+- `POST /books` — Add a new book and emit `BookAdded`
 
 ### Warehouse API
-
-- `GET /warehouse/{book}`  
-  Retrieve all shelves where the book is located, with the count per shelf.
-
-### Fulfillment API
-
-- `POST /fulfilment?orderId=...`  
-  Fulfill an order by passing a list of `{ book, shelf, numberOfBooks }`.
+- `GET /warehouse/:bookId` — View stock by shelf
+- `POST /shelf` — Stock books on a shelf and emit `BookStocked`
 
 ### Orders API
-
-- `POST /orders`  
-  Create a new order by sending a list of book IDs.
-
-- `GET /orders`  
-  Retrieve a list of all orders.
+- `POST /orders` — Create an order
+- `GET /orders` — List all orders
 
 ---
 
 ## 🔧 OpenAPI Generation
 
-To regenerate OpenAPI spec and client SDK:
-
+Run the following in each service folder to regenerate the OpenAPI spec and client SDK:
 ```bash
 npm run generate-api
 ```
 
 This runs:
-
 ```bash
 npx tsoa spec-and-routes
-npx @openapitools/openapi-generator-cli generate -i ./src/generated/swagger.json -o ./client -g typescript-fetch --additional-properties=supportsES6=true,namingConvention=camelCase,apiNameSuffix=Api
+npx @openapitools/openapi-generator-cli generate -i ./src/generated/swagger.json -o ./client -g typescript-fetch
 ```
 
 ---
@@ -112,25 +103,21 @@ npx @openapitools/openapi-generator-cli generate -i ./src/generated/swagger.json
 ## ⚙️ Static Analysis
 
 ### Run Linter
-
 ```bash
 npm run lint
 ```
 
 ### Auto-fix Linter Issues
-
 ```bash
 npm run fix-lint
 ```
 
-### Run Prettier Formatting
-
+### Format Code
 ```bash
 npm run format
 ```
 
-### Type Check with TypeScript
-
+### Type Check
 ```bash
 npm run type-check
 ```
@@ -139,39 +126,32 @@ npm run type-check
 
 ## 🧪 GitHub Actions CI
 
-This project includes a GitHub Actions workflow defined in:
+Workflow file: `.github/workflows/ci.yml`
 
-```
-.github/workflows/ci.yml
-```
-
-It runs on every push and pull request and performs:
-
-- ESLint
-- Prettier formatting check
-- TypeScript type check
-- Tests via Vitest
+On every push and PR:
+- Lint
+- Format
+- Type check
+- Run tests
 
 ---
 
-## 🗂️ Project Structure
+## 🗂️ Project Structure (Simplified)
 
 ```
-├── adapter/assignment-4.ts       # Book filtering and adapter logic
-├── client/                       # Generated OpenAPI client SDK
-├── controllers/                 # tsoa-based route controllers
-├── src/
-│   ├── lib/db.ts                 # MongoDB connection
-│   ├── models/book.ts           # Book schema
-│   ├── data/                    # Order/Warehouse database logic
-│   ├── types/                   # Shared types
-│   ├── routes.ts                # All API endpoints
-│   └── server.ts                # Entry point for Koa server
-├── .github/workflows/ci.yml     # CI setup
-├── .eslintrc.json               # ESLint configuration
-├── .prettierrc                  # Prettier configuration
-├── tsconfig.json                # TypeScript config
-└── package.json                 # Project metadata and scripts
+├── listings-service/
+│   ├── src/
+│   │   ├── messaging/            # RabbitMQ publisher
+│   │   ├── models/               # Book schema
+│   │   ├── controllers/          # tsoa routes
+│   │   └── server.ts             # Koa server
+├── orders-service/
+│   └── ...
+├── warehouse-service/
+│   └── ...
+├── docker-compose.yml
+├── nginx.conf
+└── README.md
 ```
 
 ---
@@ -186,4 +166,4 @@ This project is part of a McMaster University Continuing Education course and is
 
 **Daniel Mason**  
 Full Stack Software Developer  
-[daniel-mason.dev](https://daniel-mason.dev)
+🌐 [daniel-mason.dev](https://daniel-mason.dev)
