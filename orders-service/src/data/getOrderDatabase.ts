@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { createMongoOrder } from '../adapters/mongoOrder';
+import { createMongoOrder } from '../adapter/mongoOrder';
 
 export function getOrderDatabase(name?: string) {
   const dbName = name ?? Math.floor(Math.random() * 100000).toString();

@@ -1,7 +1,7 @@
 import assignment4 from '../adapter/assignment-4.js'
 import { it, beforeAll, beforeEach } from 'vitest'
 
-import OrderModel from '../src/models/order.js'
+import OrderModel from '../orders-service/src/models/order.js'
 import BookModel from '../src/models/book.js'
 import ShelfModel from '../src/models/shelf.js'
 import { mongoWarehouse } from '../src/adapters/mongoWarehouse.js'

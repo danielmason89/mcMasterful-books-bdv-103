@@ -1,0 +1,114 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"Record_string.number_": {
+				"properties": {},
+				"additionalProperties": {
+					"type": "number",
+					"format": "double"
+				},
+				"type": "object",
+				"description": "Construct a type with a set of properties K of type T"
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "assignment-7",
+		"version": "1.0.0",
+		"description": "This is a template repository for the seventh assignment in BVD 103 at McMaster Continuing Education.",
+		"license": {
+			"name": "ISC"
+		},
+		"contact": {}
+	},
+	"paths": {
+		"/orders": {
+			"post": {
+				"operationId": "CreateOrder",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"orderId": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"orderId"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "Create a new order",
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"description": "List of book IDs",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"items": {
+									"type": "string"
+								},
+								"type": "array",
+								"description": "List of book IDs"
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "ListOrders",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"properties": {
+											"books": {
+												"$ref": "#/components/schemas/Record_string.number_"
+											},
+											"orderId": {
+												"type": "string"
+											}
+										},
+										"required": [
+											"books",
+											"orderId"
+										],
+										"type": "object"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get all orders",
+				"security": [],
+				"parameters": []
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/api"
+		}
+	]
+}

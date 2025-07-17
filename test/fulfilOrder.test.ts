@@ -2,10 +2,10 @@ import { it, beforeEach, expect, beforeAll, afterAll } from 'vitest';
 import mongoose from 'mongoose';
 
 import ShelfModel from '../src/models/shelf.js';
-import OrderModel from '../src/models/order.js';
+import OrderModel from '../orders-service/src/models/order.js';
 import BookModel from '../src/models/book.js';
 import { connectToDatabase } from '../src/lib/db.js';
-import { mongoOrder } from '../src/adapters/mongoOrder.js';
+import { mongoOrder } from '../orders-service/src/adapter/mongoOrder.js';
 import { mongoWarehouse } from '../src/adapters/mongoWarehouse.js';
 
 beforeAll(async () => {

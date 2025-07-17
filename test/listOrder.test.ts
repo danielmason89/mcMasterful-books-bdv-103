@@ -2,7 +2,7 @@ import assignment4 from '../adapter/assignment-4.js'
 import { it, expect, beforeEach, beforeAll } from 'vitest'
 
 import BookModel from '../src/models/book.js'
-import OrderModel from '../src/models/order.js'
+import OrderModel from '../orders-service/src/models/order.js'
 import ShelfModel from '../src/models/shelf.js'
 import { connectToDatabase } from '../src/lib/db.js'
 

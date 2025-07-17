@@ -1,9 +1,19 @@
-import { OrderPort } from '../ports/order';
+import { OrderPort } from '../../../src/ports/order';
 import { v4 as uuid } from 'uuid';
-import WarehousePort from '../ports/warehouse';
-import { BookID } from '../../adapter/assignment-4';
+import WarehousePort from '../../../src/ports/warehouse';
+import { BookID } from '../../../adapter/assignment-4';
 
 let orderData: Record<string, Record<BookID, number>> = {};
+
+export type OrderAdapter = {
+  createOrder: (bookIds: string[]) => Promise<{ orderId: string }>;
+  listOrders: () => Promise<Array<{ orderId: string; books: Record<string, number> }>>;
+  fulfilOrder: (
+    orderId: string,
+    tasks: Array<{ book: string; shelf: string; numberOfBooks: number }>
+  ) => Promise<void>;
+};
+
 
 export const memoryOrder: OrderPort & { reset(): void } = {
   async createOrder(bookIds) {

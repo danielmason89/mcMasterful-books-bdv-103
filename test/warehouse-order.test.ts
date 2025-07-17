@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { memoryWarehouse } from '../src/adapters/memoryWarehouse'
-import { memoryOrder } from '../src/adapters/memoryOrder'
+import { memoryOrder } from '../orders-service/src/adapter/memoryOrder'
 import { v4 as uuid } from 'uuid'
 
 // Mock BookID for testing

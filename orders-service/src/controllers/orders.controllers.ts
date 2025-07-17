@@ -1,6 +1,23 @@
 import { Route, Controller, Post, Get, Body, Request } from 'tsoa';
 import type { Request as KoaRequest } from 'koa';
 
+import { Router } from 'express';
+import { mongoOrder } from '../adapter/mongoOrder';
+
+export const router = Router();
+const orderAdapter = mongoOrder;
+
+router.post('/orders', async (req, res) => {
+  const { bookIds } = req.body;
+  const order = await orderAdapter.createOrder(bookIds);
+  res.json(order);
+});
+
+router.get('/orders', async (_req, res) => {
+  const orders = await orderAdapter.listOrders();
+  res.json(orders);
+});
+
 /**
  * Handles order creation and retrieval
  */

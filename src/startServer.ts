@@ -3,7 +3,7 @@ import { AddressInfo } from 'net';
 import { createApp } from './createApp.js';
 import { connectToDatabase } from './lib/db.js';
 
-import { getOrderDatabase } from './data/getOrderDatabase.js';
+import { getOrderDatabase } from '../orders-service/src/data/getOrderDatabase.js';
 import { getWarehouseDatabase } from './data/getWarehouseDatabase.js';
 
 export async function startServer(

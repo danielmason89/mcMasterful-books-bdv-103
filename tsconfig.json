@@ -18,5 +18,5 @@
     "inlineSourceMap": true,
     "resolveJsonModule": true,
   },
-  "include": ["src", "test"]
+  "include": ["src", "test", "orders-service/src/controllers/orders.controllers.ts", "orders-service/src/adapter/mongoOrder.ts", "orders-service/src/adapter/memoryOrder.ts", "orders-service/src/data/getOrderDatabase.ts", "orders-service/src/models/order.ts", "orders-service/src/data/order.ts"]
 }

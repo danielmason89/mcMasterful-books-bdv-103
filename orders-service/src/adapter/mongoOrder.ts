@@ -14,6 +14,18 @@ interface OrderDocument extends mongoose.Document {
   books: Map<string, number>;
 }
 
+export interface OrderAdapter {
+  createOrder(bookIds: string[]): Promise<{ orderId: string }>;
+  listOrders(): Promise<
+    Array<{ orderId: string; books: Record<string, number> }>
+  >;
+  fulfilOrder(
+    orderId: string,
+    tasks: Array<{ book: string; shelf: string; numberOfBooks: number }>,
+    warehouse: WarehouseAdapter
+  ): Promise<void>;
+}
+
 export function createMongoOrder(db: Connection) {
   const orderSchema = new mongoose.Schema({
     orderId: String,
