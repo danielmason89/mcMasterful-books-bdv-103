@@ -1,0 +1,136 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"BookID": {
+				"type": "string"
+			},
+			"FulfilmentRequest": {
+				"properties": {
+					"book": {
+						"type": "string"
+					},
+					"shelf": {
+						"type": "string"
+					},
+					"numberOfBooks": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"book",
+					"shelf",
+					"numberOfBooks"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "assignment-7",
+		"version": "1.0.0",
+		"description": "This is a template repository for the seventh assignment in BVD 103 at McMaster Continuing Education.",
+		"license": {
+			"name": "ISC"
+		},
+		"contact": {}
+	},
+	"paths": {
+		"/warehouse/{book}": {
+			"get": {
+				"operationId": "GetBookInfo",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"properties": {
+											"count": {
+												"type": "number",
+												"format": "double"
+											},
+											"shelf": {
+												"type": "string"
+											}
+										},
+										"required": [
+											"count",
+											"shelf"
+										],
+										"type": "object"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get all shelves where a book is placed, with counts",
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "book",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/BookID"
+						}
+					}
+				]
+			}
+		},
+		"/fulfilment": {
+			"post": {
+				"operationId": "FulfilOrder",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"description": "Fulfil an order by removing books from shelves",
+				"security": [],
+				"parameters": [
+					{
+						"description": "The ID of the order to fulfill",
+						"in": "query",
+						"name": "orderId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "Array of books to fulfill",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"items": {
+									"$ref": "#/components/schemas/FulfilmentRequest"
+								},
+								"type": "array",
+								"description": "Array of books to fulfill"
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/api"
+		}
+	]
+}

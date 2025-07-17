@@ -51,14 +51,16 @@ services:
       - rabbitmq
     environment:
       - USE_DOCKER=true
-
   server3:
     image: node:20
     volumes:
-      - ./:/app
+      - ./warehouse-service:/app
     working_dir: /app
     command: npx -y tsx src/server.ts
     ports:
       - "3002:3000"
     depends_on:
       - mongo
+      - rabbitmq
+    environment:
+      - USE_DOCKER=true
