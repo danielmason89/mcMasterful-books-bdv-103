@@ -3,7 +3,8 @@ import amqp from 'amqplib';
 let channel: amqp.Channel;
 
 export async function connectToMessageBus() {
-  const connection = await amqp.connect('amqp://rabbitmq');
+  const RABBITMQ_HOST = process.env.RABBITMQ_HOST || 'rabbitmq';
+  const connection = await amqp.connect(`amqp://${RABBITMQ_HOST}`);
   channel = await connection.createChannel();
 }
 

@@ -21,6 +21,7 @@
         "@koa/cors": "^5.0.0",
         "@koa/router": "^13.1.0",
         "@types/mongoose": "^5.11.96",
+        "amqplib": "^0.10.8",
         "koa": "^2.15.3",
         "koa-bodyparser": "^4.4.1",
         "koa-qs": "^3.0.0",

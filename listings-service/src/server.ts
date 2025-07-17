@@ -1,9 +1,16 @@
+import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import { startServer } from './startServer';
 
+dotenv.config();
+
 async function bootstrap() {
   try {
-    await mongoose.connect('mongodb://mongo-listings:27017/listings-db');
+    const MONGO_URI = process.env.MONGO_URI || 'mongodb://mongo:27017/booksdb';
+    await mongoose.connect(MONGO_URI, {
+      dbName: 'booksdb',
+    });
+
     console.log('🟢 Connected to MongoDB for listings-service');
 
     const { address } = await startServer(3003);

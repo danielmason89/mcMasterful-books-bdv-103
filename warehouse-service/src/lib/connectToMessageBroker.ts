@@ -6,7 +6,13 @@ const RABBITMQ_HOST =
     : 'amqp://localhost';
 
 export async function connectToMessageBroker() {
-  const connection = await amqp.connect(RABBITMQ_HOST);
+  const connection = await amqp.connect('amqp://rabbitmq:5672');
   const channel = await connection.createChannel();
-  return channel;
+
+  process.once('SIGINT', () => {
+    channel.close();
+    connection.close();
+  });
+
+  return { connection, channel };
 }

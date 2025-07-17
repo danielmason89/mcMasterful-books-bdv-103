@@ -10,6 +10,7 @@ services:
       - server
       - server2
       - server3
+      - server4
 
   mongo:
     image: mongo
@@ -64,3 +65,17 @@ services:
       - rabbitmq
     environment:
       - USE_DOCKER=true
+  server4:
+    image: node:20
+    volumes:
+      - ./listings-service:/app
+    working_dir: /app
+    command: npx -y tsx src/server.ts
+    ports:
+      - "3003:3000"
+    depends_on:
+      - mongo
+      - rabbitmq
+    environment:
+      - USE_DOCKER=true
+      - RABBITMQ_HOST=rabbitmq
