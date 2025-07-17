@@ -1,5 +1,5 @@
 import { BookID, ShelfId, OrderId } from '../../../adapter/assignment-4'; // adjust the path if needed
-import WarehousePort from './warehouse';
+import WarehousePort from '../types/warehouse';
 
 export interface OrderPort {
   createOrder(order: BookID[]): Promise<{ orderId: OrderId }>;

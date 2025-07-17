@@ -1,16 +1,7 @@
-import { publishBookStocked } from '../messaging/publish';
+import { memoryWarehouse } from './memoryWarehouse';
+import { mongoWarehouse } from './mongoWarehouse';
 
-export async function placeBooksOnShelf(bookId: string, title: string, quantity: number): Promise<void> {
-  // Save to database or memory – mock logic
-  console.log(`Placed ${quantity} of ${title} on shelf.`);
-
-  // Publish message
-  await publishBookStocked({
-    type: 'BookStocked',
-    data: {
-      bookId,
-      title,
-      quantity,
-    },
-  });
-}
+export const warehouse =
+  process.env.USE_DB === 'true' || process.env.NODE_ENV === 'test'
+    ? mongoWarehouse
+    : memoryWarehouse;

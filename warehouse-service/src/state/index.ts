@@ -1,5 +1,5 @@
-import type { OrderAdapter } from '../types/adapters';
-import type { WarehouseAdapter } from '../types/adapters';
+import type { OrderAdapter } from '../../../src/types/adapters';
+import type { WarehouseAdapter } from '../../../src/types/adapters';
 
 export interface AppOrderDatabaseState {
   order: OrderAdapter;

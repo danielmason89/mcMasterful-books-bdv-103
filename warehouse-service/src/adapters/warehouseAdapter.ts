@@ -23,11 +23,16 @@ export const warehouseAdapter: WarehousePort = {
 
   async getTotalStock(bookId) {
     const all = await ShelfModel.find({ bookId });
-    return all.reduce((sum, item) => sum + item.count, 0);
+    return all.reduce((sum, item) => sum + (typeof item.count === 'number' ? item.count : 0), 0);
   },
 
-  async findBookOnShelf(bookId, shelf) {
-    const shelfEntry = await ShelfModel.findOne({ bookId, shelf });
-    return shelfEntry ? { shelf, count: shelfEntry.count } : null;
+  async findBookOnShelf(shelf: string, bookId: string) {
+    const shelfEntries = await ShelfModel.find({ bookId, shelf });
+    return shelfEntries
+      .filter(entry => typeof entry.count === 'number' && typeof entry.shelf === 'string')
+      .map(entry => ({
+        shelf: entry.shelf as string,
+        count: entry.count as number
+      }));
   }
 };

@@ -6,4 +6,8 @@ const shelfSchema = new mongoose.Schema({
   count: Number,
 });
 
-export const ShelfModel = mongoose.model('Shelf', shelfSchema);
+
+const ShelfModel =
+  mongoose.models.Shelf || mongoose.model('Shelf', shelfSchema);
+
+export default ShelfModel;

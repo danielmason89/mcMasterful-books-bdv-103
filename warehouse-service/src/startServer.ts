@@ -1,9 +1,9 @@
 import http from 'http';
 import { AddressInfo } from 'net';
-import { connectToDatabase } from './lib/db.js';
-import { connectToMessageBroker } from './lib/connectToMessageBroker.js';
+import { connectToDatabase } from '../src/lib/db';
+import { connectToMessageBroker } from '../src/lib/connectToMessageBroker';
 
-import { getWarehouseDatabase } from './data/getWarehouseDatabase.js';
+import { getWarehouseDatabase } from '../src/data/getWarehouseDatabase'
 
 export async function startServer(
   port = 0,

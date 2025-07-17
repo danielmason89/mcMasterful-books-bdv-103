@@ -1,4 +1,4 @@
-import WarehousePort from '../ports/warehouse';
+import { WarehousePort } from '../ports/warehousePort';
 
 let shelfData: Record<string, Record<string, number>> = {};
 

@@ -3,7 +3,7 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import { memoryWarehouse } from '../src/adapters/memoryWarehouse'
 import { mongoWarehouse } from '../src/adapters/mongoWarehouse'
 import { connectToDatabase } from '../src/lib/db'
-import ShelfModel from '../src/models/shelf'
+import ShelfModel from '../warehouse-service/src/models/shelf'
 
 describe('Warehouse Adapter Compatibility', () => {
   const bookId = new mongoose.Types.ObjectId().toString();

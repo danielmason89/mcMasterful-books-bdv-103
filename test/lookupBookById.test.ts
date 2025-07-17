@@ -1,7 +1,7 @@
 import assignment4 from '../adapter/assignment-4.js'
 import { it, expect, beforeAll } from 'vitest'
 
-import BookModel from '../src/models/book.js'
+import BookModel from '../warehouse-service/src/models/book.js'
 import { connectToDatabase } from '../src/lib/db.js'
 
 import mongoose from 'mongoose'

@@ -4,7 +4,7 @@
  * capabilities for listing books.
  */
 import previous_assignment from './assignment-2.js'
-import BookModel from '../src/models/book.js'
+import BookModel from '../warehouse-service/src/models/book.js'
 
 export type BookID = string
 

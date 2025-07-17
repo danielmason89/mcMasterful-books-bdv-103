@@ -1,6 +1,6 @@
 import assignment from '../adapter/assignment-4.js'
 
-import BookModel from '../src/models/book.js'
+import BookModel from '../warehouse-service/src/models/book.js'
 
 import { describe, it, expect, beforeEach } from 'vitest'
 

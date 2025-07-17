@@ -18,5 +18,5 @@
     "inlineSourceMap": true,
     "resolveJsonModule": true,
   },
-  "include": ["src", "test", "orders-service/src/controllers/orders.controllers.ts", "orders-service/src/adapter/mongoOrder.ts", "orders-service/src/adapter/memoryOrder.ts", "orders-service/src/data/getOrderDatabase.ts", "orders-service/src/models/order.ts", "orders-service/src/data/order.ts"]
+  "include": ["src", "test", "orders-service/src/controllers/orders.controllers.ts", "orders-service/src/adapter/mongoOrder.ts", "orders-service/src/adapter/memoryOrder.ts", "orders-service/src/data/getOrderDatabase.ts", "orders-service/src/models/order.ts", "orders-service/src/data/order.ts", "warehouse-service/src/controllers/fulfilment.controllers.ts", "warehouse-service/src/types/book.d.ts", "warehouse-service/src/state/index.ts", "warehouse-service/src/models/shelf.ts", "warehouse-service/src/models/book.ts"]
 }
