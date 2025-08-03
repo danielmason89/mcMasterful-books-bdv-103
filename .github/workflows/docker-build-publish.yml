@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        service: [listings-service, warehouse-service, orders-service]
+        service: [listings-service, warehouse-service, orders-service, mcmasterful-books-docker]
 
     steps:
       - name: Checkout
@@ -31,6 +31,10 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/${{ matrix.service }}
-          docker build -t $IMAGE_NAME ./$(echo ${{ matrix.service }})
-          docker push $IMAGE_NAME
+          SERVICE_DIR=${{ matrix.service }}
+          if [ "$SERVICE_DIR" = "mcmasterful-books-docker" ]; then
+            docker build -t ghcr.io/${{ github.repository_owner }}/$SERVICE_DIR ./
+          else
+            docker build -t ghcr.io/${{ github.repository_owner }}/$SERVICE_DIR ./$SERVICE_DIR
+          fi
+          docker push ghcr.io/${{ github.repository_owner }}/$SERVICE_DIR

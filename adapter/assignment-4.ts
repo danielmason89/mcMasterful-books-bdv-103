@@ -95,7 +95,7 @@ async function listOrders(): Promise<Array<{ orderId: OrderId, books: Record<Boo
   return await order.listOrders()
 }
 
-const assignment = 'assignment-7'
+const assignment = 'assignment-8'
 
 export default {
   assignment,

@@ -3,9 +3,18 @@ import amqp from 'amqplib';
 let channel: amqp.Channel;
 
 export async function connectToMessageBus() {
-  const RABBITMQ_HOST = process.env.RABBITMQ_HOST || 'rabbitmq';
+  const RABBITMQ_HOST =
+    process.env.NODE_ENV === 'production' || process.env.USE_DOCKER === 'true'
+      ? 'rabbitmq'
+      : 'localhost';
+
   const connection = await amqp.connect(`amqp://${RABBITMQ_HOST}`);
   channel = await connection.createChannel();
+
+  process.once('SIGINT', async () => {
+    await channel.close();
+    await connection.close();
+  });
 }
 
 export async function publishEvent(queue: string, message: object) {

@@ -1,9 +1,13 @@
 import http from 'http';
 import { AddressInfo } from 'net';
+import express from 'express';
+import amqp from 'amqplib';
+
 import { connectToDatabase } from '../src/lib/db';
 import { connectToMessageBroker } from '../src/lib/connectToMessageBroker';
+import { getWarehouseDatabase } from '../src/data/getWarehouseDatabase';
 
-import { getWarehouseDatabase } from '../src/data/getWarehouseDatabase'
+const rabbitmqUrl = process.env.RABBITMQ_URL || 'amqp://localhost';
 
 export async function startServer(
   port = 0,
@@ -14,7 +18,16 @@ export async function startServer(
   close: () => Promise<void>;
 }> {
   await connectToDatabase();
-  await connectToMessageBroker(); // 👈 Add RabbitMQ here if needed
+
+  try {
+    console.log(`📡 Connecting to RabbitMQ at ${rabbitmqUrl}`);
+    await amqp.connect(rabbitmqUrl); // Use this only if not handled in connectToMessageBroker()
+    await connectToMessageBroker();
+    console.log('✅ Connected to RabbitMQ');
+  } catch (err) {
+    console.error('❌ Failed to connect to RabbitMQ:', err);
+    throw err;
+  }
 
   const dbName = useRandomDb
     ? Math.floor(Math.random() * 100000).toString()
@@ -38,10 +51,11 @@ export async function startServer(
     placeBooksOnShelf: _warehouse.placeBooksOnShelf,
     getBooksOnShelf: _warehouse.getBooksOnShelf,
     getTotalStock: _warehouse.getTotalStock,
-    removeBooksFromShelf: _warehouse.removeBooksFromShelf
+    removeBooksFromShelf: _warehouse.removeBooksFromShelf,
   };
 
   const app = createApp({ orders: {}, warehouse: warehouseAdapter });
+
   return new Promise((resolve) => {
     const server = app.listen(port, () => {
       const addressInfo = server.address() as AddressInfo;
@@ -51,14 +65,25 @@ export async function startServer(
         close: () =>
           new Promise((res, rej) =>
             server.close((err: any) => (err ? rej(err) : res()))
-          )
+          ),
       });
     });
   });
 }
-import express from 'express';
 
-function createApp(arg0: { orders: {}; warehouse: { findBookOnShelf: (bookId: string) => Promise<{ shelf: string; count: number; }[]>; placeBooksOnShelf: any; getBooksOnShelf: any; getTotalStock: any; removeBooksFromShelf: any; }; }) {
+function createApp({
+  orders,
+  warehouse,
+}: {
+  orders: {};
+  warehouse: {
+    findBookOnShelf: (bookId: string) => Promise<{ shelf: string; count: number }[]>;
+    placeBooksOnShelf: any;
+    getBooksOnShelf: any;
+    getTotalStock: any;
+    removeBooksFromShelf: any;
+  };
+}) {
   const app = express();
 
   app.get('/health', (_req, res) => {
@@ -67,4 +92,3 @@ function createApp(arg0: { orders: {}; warehouse: { findBookOnShelf: (bookId: st
 
   return app;
 }
-
