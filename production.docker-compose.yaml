@@ -23,6 +23,8 @@ services:
       - "15672:15672"
 
   front-end:
+    build:
+      context: ./adapter
     image: ghcr.io/danielmason89/mcmasterful-books-docker:latest
 
   orders-service:
