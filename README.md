@@ -1,8 +1,8 @@
-# 📚 Assignment 7: Horizontal Scaling — Bookstore API
+# 📚 Assignment 8: Horizontal Scaling — Bookstore API
 
 This is the seventh assignment for **BDV 103: Advanced JavaScript through Node.js** at McMaster University Continuing Education. The focus of this assignment was on **horizontal scaling**, **event-driven microservices**, and **test-driven API development**, including integrating CI pipelines and generating an OpenAPI-compliant client SDK.
 
-Assignment 7 builds on prior work by introducing three decoupled services — `warehouse`, `orders`, and `listings` — coordinated through RabbitMQ messaging and supporting independent MongoDB instances.
+Assignment 8 builds on prior work by introducing three decoupled services — `warehouse`, `orders`, and `listings` — coordinated through RabbitMQ messaging and supporting independent MongoDB instances.
 
 ---
 
@@ -65,6 +65,24 @@ The following services will be available:
 - Orders API: [http://localhost:3001/docs](http://localhost:3001/docs)
 - Listings API: [http://localhost:3003/docs](http://localhost:3003/docs)
 - RabbitMQ Management UI: [http://localhost:15672](http://localhost:15672)
+
+---
+
+## 🐳 Production Deployment
+
+To run the app using production containers from GitHub Container Registry:
+
+### Prerequisites
+
+- Docker installed
+- Access to `ghcr.io`
+
+### Steps
+
+1. Clone the repo:
+```bash
+git clone https://github.com/danielmason/mcmasterful-books-bdv-103.git
+cd mcmasterful-books-bdv-103
 
 ---
 

@@ -1,0 +1,47 @@
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - front-end
+      - orders-service
+      - warehouse-service
+      - listings-service
+
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  front-end:
+    image: ghcr.io/danielmason89/mcmasterful-books-docker:latest
+
+  orders-service:
+    image: ghcr.io/danielmason89/orders-service:latest
+    environment:
+      - USE_DOCKER=true
+      - RABBITMQ_HOST=rabbitmq
+      - MONGO_URL=mongodb://mongo:27017/orders
+
+  warehouse-service:
+    image: ghcr.io/danielmason89/warehouse-service:latest
+    environment:
+      - USE_DOCKER=true
+      - RABBITMQ_HOST=rabbitmq
+      - MONGO_URL=mongodb://mongo:27017/warehouse
+
+  listings-service:
+    image: ghcr.io/danielmason89/listings-service:latest
+    environment:
+      - USE_DOCKER=true
+      - RABBITMQ_HOST=rabbitmq
+      - MONGO_URL=mongodb://mongo:27017/listings
